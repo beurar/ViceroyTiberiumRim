@@ -44,17 +44,17 @@ namespace TiberiumRim
             pawn.Name = name;
             pawn.story.birthLastName = name.Last;
 
-            pawn.story.childhood = BackstoryFrom(BackstorySlot.Adulthood);
-            pawn.story.adulthood = BackstoryFrom(BackstorySlot.Childhood);
+            pawn.story.Childhood = BackstoryFrom(BackstorySlot.Adulthood);
+            pawn.story.Adulthood = BackstoryFrom(BackstorySlot.Childhood);
 
-            pawn.story.melanin = 0.4f;
+            pawn.story.skinColorOverride = new UnityEngine.Color(0.831f, 0.471f, 0.063f);
             pawn.story.bodyType = BodyTypeDefOf.Male;
-            pawn.story.crownType = CrownType.Narrow;
-            pawn.story.hairColor = default;
+            pawn.story.headType = DefDatabase<HeadTypeDef>.GetNamed("Narrow");
+            pawn.story.HairColor = default;
             pawn.story.hairDef = DefDatabase<HairDef>.GetNamed("Shaved");
 
-            pawn.story.traits.GainTrait(new Trait(TraitDefOf.Tough, TraitDefOf.Tough.degreeDatas.First().degree, true));
-            pawn.story.traits.GainTrait(new Trait(TraitDefOf.ShootingAccuracy, TraitDefOf.ShootingAccuracy.degreeDatas.First().degree, true));
+            pawn.story.traits.GainTrait(new Trait(DefDatabase<TraitDef>.GetNamed("Tough"), DefDatabase<TraitDef>.GetNamed("Tough").degreeDatas.First().degree, true));
+            pawn.story.traits.GainTrait(new Trait(DefDatabase<TraitDef>.GetNamed("ShootingAccuracy"), DefDatabase<TraitDef>.GetNamed("ShootingAccuracy").degreeDatas.First().degree, true));
             pawn.story.traits.GainTrait(new Trait(TraitDefOf.Transhumanist, TraitDefOf.Transhumanist.degreeDatas.First().degree, true));
 
             //Skills
@@ -96,9 +96,9 @@ namespace TiberiumRim
             return pawn;
         }
 
-        private static Backstory BackstoryFrom(BackstorySlot slot)
+        private static BackstoryDef BackstoryFrom(BackstorySlot slot)
         {
-            return new Backstory()
+            return new BackstoryDef()
             {
                 baseDesc = "Test description",
                 slot = slot,

@@ -20,7 +20,7 @@ namespace TiberiumRim
         public bool needsNeeded = true;
         public bool hediffsNeeded = false;
 
-        protected override void DoIngestionOutcomeSpecial(Pawn pawn, Thing ingested)
+        protected override void DoIngestionOutcomeSpecial(Pawn pawn, Thing ingested, int ingestedCount)
         {
             if (ShoulDoSideEffect(pawn))
             {

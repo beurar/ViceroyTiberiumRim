@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using RimWorld;
+using UnityEngine;
 using Verse;
 
 namespace TiberiumRim.Weaponry
@@ -20,7 +21,7 @@ namespace TiberiumRim.Weaponry
             base.Tick();
         }
 
-        protected override void Impact(Thing hitThing)
+        protected override void Impact(Thing hitThing, bool blockedByShield)
         {
             GenClamor.DoClamor(this, 2.1f, ClamorDefOf.Impact);
         }
@@ -30,9 +31,9 @@ namespace TiberiumRim.Weaponry
             this.Destroy();
         }
 
-        public override void Draw()
+        protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
-            base.Draw();
+            base.DrawAt(drawLoc, flip);
         }
     }
 }

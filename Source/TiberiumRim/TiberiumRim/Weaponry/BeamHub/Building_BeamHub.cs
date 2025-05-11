@@ -59,7 +59,7 @@ namespace TiberiumRim
             base.ExposeData();
             Scribe_Collections.Look(ref connectedHubs, "connectedHubs", LookMode.Reference);
             Scribe_Collections.Look(ref connectedSegments, "segments");
-            DataExposeUtility.BoolArray(ref allowedDirections, 4, "allowedDirections");
+            DataExposeUtility.LookBoolArray(ref allowedDirections, 4, "allowedDirections");
         }
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
@@ -232,9 +232,9 @@ namespace TiberiumRim
             return sb.ToString().TrimStart().TrimEndNewlines();
         }
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             if (!Find.Selector.IsSelected(this)) return;
             foreach (var hub in connectedHubs)
             {

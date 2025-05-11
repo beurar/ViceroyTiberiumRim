@@ -5,3 +5,7 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\TiberiumRim\Source\T
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\TiberiumRim\Assemblies\TiberiumRim.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\TiberiumRim\Assemblies\TiberiumRim.pdb
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\TiberiumRim\Source\TiberiumRim\TiberiumRim\obj\Release\TiberiumRim.csproj.CoreCompileInputs.cache
+F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Source\TiberiumRim\TiberiumRim\obj\Release\TiberiumRim.csproj.AssemblyReference.cache
+F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Source\TiberiumRim\TiberiumRim\obj\Release\TiberiumRim.csproj.CoreCompileInputs.cache
+F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Source\TiberiumRim\TiberiumRim\obj\Release\TiberiumRim.dll
+F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Source\TiberiumRim\TiberiumRim\obj\Release\TiberiumRim.pdb

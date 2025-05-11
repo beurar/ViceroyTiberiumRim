@@ -8,7 +8,7 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class VeinholeFood : ThingWithComps, IThingHolder, IThoughtGiver, IStrippable, IBillGiver
+    public class VeinholeFood : ThingWithComps, IThingHolder, IObservedThoughtGiver, IStrippable, IBillGiver
     {
         private Corpse corpse;
         private ThingOwner innerContainer;
@@ -73,9 +73,9 @@ namespace TiberiumRim
             return innerContainer;
         }
 
-        public Thought_Memory GiveObservedThought()
+        public Thought_Memory GiveObservedThought(Pawn observer)
         {
-            return corpse.GiveObservedThought();
+            return corpse.GiveObservedThought(observer);
         }
 
         public bool AnythingToStrip()
@@ -157,7 +157,7 @@ namespace TiberiumRim
             return Mathf.InverseLerp(0, travelTime, tick++);
         }
 
-        public override void DrawAt(Vector3 drawLoc, bool flip = false)
+        public new void DrawAt(Vector3 drawLoc, bool flip = false)
         {
             //base.DrawAt(drawLoc, flip);
             Log.Message("Actual pos: " + tweenedPos);

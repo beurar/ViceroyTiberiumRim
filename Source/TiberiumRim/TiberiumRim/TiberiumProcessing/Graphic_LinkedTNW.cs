@@ -22,7 +22,7 @@ namespace TiberiumRim
             return c.InBounds(parent.Map) && parent.Map.GetComponent<MapComponent_TNWManager>().ConnectionAt(c);
         }
 
-        public override void Print(SectionLayer layer, Thing parent)
+        public override void Print(SectionLayer layer, Thing parent, float extraRotation)
         {
             var comp = parent.TryGetComp<CompTNW>();
             if (comp == null) return;

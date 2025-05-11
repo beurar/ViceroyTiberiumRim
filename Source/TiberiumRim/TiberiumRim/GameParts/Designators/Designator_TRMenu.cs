@@ -76,7 +76,7 @@ namespace TiberiumRim
             CurrentDesignator?.DrawPanelReadout(ref curY, width);
         }
 
-        public override GizmoResult GizmoOnGUI(Vector2 topLeft, float maxWidth)
+        public override GizmoResult GizmoOnGUI(Vector2 topLeft, float maxWidth, GizmoRenderParms parms)
         {
             Rect windowRect = new Rect(200f, UI.screenHeight - (560f + searchBarSize.y), MenuSize.x, MenuSize.y + searchBarSize.y);
             Find.WindowStack.ImmediateWindow(231674, windowRect, WindowLayer.GameUI, delegate
@@ -273,7 +273,7 @@ namespace TiberiumRim
 
         private void DrawDesignator(Rect rect, Designator designator)
         {
-            if (Widgets.ButtonImage(rect, designator.icon))
+            if (Widgets.ButtonImage(rect, (Texture2D)designator.icon))
             {
                 designator.ProcessInput(null);
             }

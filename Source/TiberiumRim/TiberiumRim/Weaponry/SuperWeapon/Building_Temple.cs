@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LudeonTK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,9 +75,9 @@ namespace TiberiumRim
 
         public float CurRot => rotation * CurPct;
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
         }
 
         public override IEnumerable<Gizmo> GetGizmos()

@@ -14,9 +14,9 @@ namespace TiberiumRim
         public override Graphic Graphic => TiberiumContent.TiberiumNetworkPipes;
         public CompTNW_Pipe CompTNW => this.TryGetComp<CompTNW_Pipe>();
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             if (CompTNW.Network != null)
             {
                 Color color = CompTNW.Network.GeneralColor;

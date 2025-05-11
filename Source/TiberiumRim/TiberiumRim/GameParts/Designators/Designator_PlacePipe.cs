@@ -23,9 +23,9 @@ namespace TiberiumRim
         public override bool DragDrawMeasurements => true;
         public override float PanelReadoutTitleExtraRightMargin => 20f;
 
-        public override GizmoResult GizmoOnGUI(Vector2 topLeft, float maxWidth)
+        public override GizmoResult GizmoOnGUI(Vector2 topLeft, float maxWidth, GizmoRenderParms parms)
         {
-            GizmoResult result = base.GizmoOnGUI(topLeft, maxWidth);
+            GizmoResult result = base.GizmoOnGUI(topLeft, maxWidth, parms);
             return result;
         }
 

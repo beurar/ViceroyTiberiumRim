@@ -15,7 +15,7 @@ namespace TiberiumRim
 
         public Gizmo_TiberiumStorage()
         {
-            this.order = -200f;
+            this.Order = -200f;
         }
 
         // Token: 0x0600298E RID: 10638 RVA: 0x0013B06B File Offset: 0x0013946B
@@ -24,7 +24,7 @@ namespace TiberiumRim
             return optionToggled ? 310 : 150f;
         }
 
-        public override GizmoResult GizmoOnGUI(Vector2 topLeft, float maxWidth)
+        public override GizmoResult GizmoOnGUI(Vector2 topLeft, float maxWidth, GizmoRenderParms parms)
         {
             Rect MainRect = new Rect(topLeft.x, topLeft.y, 150, 75f);
             Find.WindowStack.ImmediateWindow(145356798, MainRect, WindowLayer.GameUI, delegate

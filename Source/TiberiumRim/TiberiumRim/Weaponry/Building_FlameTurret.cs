@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using LudeonTK;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -97,9 +98,9 @@ namespace TiberiumRim
             fireWallPos = LocalTargetInfo.Invalid;
         }
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             if (settingFireWall)
             {
                 GenDraw.DrawFieldEdges(TRUtils.SectorCells(Position, Map, MainGun.AttackVerb.Props.range, 90f, (DrawPos.AngleToFlat(UI.MouseMapPosition()) + 90).AngleWrapped(), false).ToList());

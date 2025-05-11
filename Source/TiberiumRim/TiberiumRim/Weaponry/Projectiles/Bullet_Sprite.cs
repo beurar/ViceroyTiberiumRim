@@ -33,8 +33,9 @@ namespace TiberiumRim
 
         public Graphic_Sprite BulletSprite => (Graphic_Sprite) Graphic;
 
-        public override void Draw()
+        protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
+            base.DrawAt(drawLoc, flip);
             Mesh mesh = MeshPool.GridPlane(BulletSprite.data.drawSize);
             Graphics.DrawMesh(mesh, DrawPos, ExactRotation, BulletSprite.CurrentGraphic(this).MatSingle, 0);
             Comps_PostDraw();

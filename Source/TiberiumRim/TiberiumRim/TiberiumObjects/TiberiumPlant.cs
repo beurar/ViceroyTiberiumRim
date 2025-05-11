@@ -73,9 +73,9 @@ namespace TiberiumRim
         }
 
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
         }
 
         public Graphic OverlayGraphic
@@ -179,7 +179,7 @@ namespace TiberiumRim
 					vector += Gen.RandomHorizontalVector(max);
 					goto IL_20B;
 					IL_157:
-					Log.Error(this.def + " must have plant.MaxMeshCount that is a perfect square.", false);
+					Log.Error(this.def + " must have plant.MaxMeshCount that is a perfect square.");
 					goto IL_16D;
 				}
 				vector = a + Gen.RandomHorizontalVector(0.05f);

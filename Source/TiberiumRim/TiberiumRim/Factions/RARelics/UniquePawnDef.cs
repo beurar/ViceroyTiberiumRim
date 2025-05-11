@@ -16,7 +16,7 @@ namespace TiberiumRim
 
         //Basic Body
         public BodyTypeDef bodyType;
-        public CrownType crownType;
+        public HeadTypeDef crownType;
         public Gender gender;
         public HairDef hairDef;
         public float melanin;
@@ -58,8 +58,8 @@ namespace TiberiumRim
         public WorkTags workDisables;
         public WorkTags requiredWorkTags;
         public List<string> spawnCategories = new List<string>();
-        public List<TraitEntry> forcedTraits;
-        public List<TraitEntry> disallowedTraits;
+        public List<TraitDef> forcedTraits;
+        public List<TraitDef> disallowedTraits;
         public List<string> hairTags;
         private string nameMaker;
         private RulePackDef nameMakerResolved;
@@ -68,9 +68,9 @@ namespace TiberiumRim
 
         public bool shuffleable = true;
 
-        public Backstory BackstoryFromThis()
+        public BackstoryDef BackstoryFromThis()
         {
-            Backstory backstory = new Backstory()
+            BackstoryDef backstory = new BackstoryDef()
             {
                 identifier = identifier,
                 slot = slot,

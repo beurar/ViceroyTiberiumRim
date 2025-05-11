@@ -28,14 +28,14 @@ namespace TiberiumRim
         {
             base.SpawnSetup(map, respawningAfterLoad);
             ConnectToParent();
-            Map.mapDrawer.MapMeshDirty(parentHub.Position, MapMeshFlag.Buildings);
+            Map.mapDrawer.MapMeshDirty(parentHub.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Buildings"));
         }
 
         public override void DeSpawn(DestroyMode mode = DestroyMode.Vanish)
         {
             base.DeSpawn(mode);
             parentHub.RemoveHubTurret(this);
-            Map.mapDrawer.MapMeshDirty(parentHub.Position, MapMeshFlag.Buildings);
+            Map.mapDrawer.MapMeshDirty(parentHub.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Buildings"));
         }
 
         public void ConnectToParent()

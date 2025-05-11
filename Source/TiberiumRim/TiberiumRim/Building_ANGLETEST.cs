@@ -14,9 +14,9 @@ namespace TiberiumRim
         private IntVec3 AVector;
         private IntVec3 BVector;
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             GenDraw.DrawLineBetween(DrawPos, AVector.ToVector3Shifted(), SimpleColor.Red);
             GenDraw.DrawLineBetween(DrawPos, BVector.ToVector3Shifted(), SimpleColor.Blue);
             GenDraw.DrawLineBetween(AVector.ToVector3Shifted(), BVector.ToVector3Shifted(), SimpleColor.Green);

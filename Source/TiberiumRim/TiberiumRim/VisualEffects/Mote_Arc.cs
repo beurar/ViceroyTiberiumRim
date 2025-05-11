@@ -27,7 +27,7 @@ namespace TiberiumRim
             base.Tick();
         }
 
-        public override void Draw()
+        protected new void DrawMote(float altitude)
         {
             if (drawMat == null)
             {

@@ -21,6 +21,7 @@ using UnityEngine;
 using Verse.AI;
 using Verse.Sound;
 using MapInterface = RimWorld.MapInterface;
+using LudeonTK;
 
 namespace TiberiumRim
 {
@@ -80,7 +81,7 @@ namespace TiberiumRim
 
             public static int GibHelp(int retval , int count)
             {
-                Log.Message("Returning " + (retval != 0) + " at " + count, true);
+                Log.Message("Returning " + (retval != 0) + " at " + count);
                 return retval;
             }
 
@@ -395,7 +396,7 @@ namespace TiberiumRim
             public static void Postfix(Vector3 clickPos, Pawn pawn, List<FloatMenuOption> opts)
             {
                 if (!pawn.PawnHasRangedHediffVerb()) return;
-                foreach (LocalTargetInfo attackTarg in GenUI.TargetsAt_NewTemp(clickPos, TargetingParameters.ForAttackHostile(), true, null))
+                foreach (LocalTargetInfo attackTarg in GenUI.TargetsAt(clickPos, TargetingParameters.ForAttackHostile(), true, null))
                 {
                     Action rangedAct = HediffRangedHelper.GetRangedAttackAction(pawn, attackTarg, out string str);
                     string text = "FireAt".Translate(attackTarg.Thing.Label, attackTarg.Thing);
@@ -408,7 +409,7 @@ namespace TiberiumRim
                         floatMenuOption.autoTakeablePriority = 40f;
                         floatMenuOption.action = delegate ()
                         {
-                            MoteMaker.MakeStaticMote(attackTarg.Thing.DrawPos, attackTarg.Thing.Map, ThingDefOf.Mote_FeedbackShoot, 1f);
+                            MoteMaker.MakeStaticMote(attackTarg.Thing.DrawPos, attackTarg.Thing.Map, ThingDefOf.Mote_ColonistAttacking, 1f);
                             rangedAct();
                         };
                     }
@@ -1074,12 +1075,12 @@ namespace TiberiumRim
                 //!GraphicsManager.Manager.CanGlow
                 if (__instance.parent is TiberiumCrystal crystal && crystal.Parent != null && crystal.Parent.turnOffLight || !__instance.parent.Spawned)
                 {
-                    map.mapDrawer.MapMeshDirty(__instance.parent.Position, MapMeshFlag.Things);
+                    map.mapDrawer.MapMeshDirty(__instance.parent.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
                     map.glowGrid.DeRegisterGlower(__instance);
                 }
                 else
                 {
-                    map.mapDrawer.MapMeshDirty(__instance.parent.Position, MapMeshFlag.Things);
+                    map.mapDrawer.MapMeshDirty(__instance.parent.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
                     map.glowGrid.RegisterGlower(__instance);
                 }
                 return false;

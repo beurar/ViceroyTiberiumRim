@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Text;
+using LudeonTK;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -205,10 +206,10 @@ namespace TiberiumRim
     {
         public Material mat;
         public float size;
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
             TRUtils.DrawTargeter(Position, mat, size);
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
         }
     }
 }

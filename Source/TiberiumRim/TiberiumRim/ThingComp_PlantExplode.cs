@@ -14,9 +14,9 @@ namespace TiberiumRim
             base.PostSpawnSetup(respawningAfterLoad);
         }
 
-        public override void PostPreApplyDamage(DamageInfo dinfo, out bool absorbed)
+        public override void PostPreApplyDamage(ref DamageInfo dinfo, out bool absorbed)
         {
-            base.PostPreApplyDamage(dinfo, out absorbed);
+            base.PostPreApplyDamage(ref dinfo, out absorbed);
             if (TRUtils.Chance(properties.explosionChance) && dinfo.Def.isExplosive)
             {
                 GenExplosion.DoExplosion(this.parent.Position, parent.Map, properties.explosiveRadius, DamageDefOf.Bomb, null, properties.damageAmountBase);

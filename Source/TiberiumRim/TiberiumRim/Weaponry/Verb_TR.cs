@@ -243,9 +243,9 @@ namespace TiberiumRim
             }
             Vector3 drawPos = ShotOrigin();
             Projectile projectile2 = (Projectile)GenSpawn.Spawn(projectile, shootLine.Source, caster.Map, WipeMode.Vanish);
-            if (verbProps.forcedMissRadius > 0.5f)
+            if (verbProps.ForcedMissRadius > 0.5f)
             {
-                float num = VerbUtility.CalculateAdjustedForcedMiss(verbProps.forcedMissRadius, currentTarget.Cell - caster.Position);
+                float num = VerbUtility.CalculateAdjustedForcedMiss(verbProps.ForcedMissRadius, currentTarget.Cell - caster.Position);
                 if (num > 0.5f)
                 {
                     int max = GenRadial.NumCellsInRadius(num);
@@ -262,7 +262,7 @@ namespace TiberiumRim
                         {
                             projectileHitFlags &= ~ProjectileHitFlags.NonTargetPawns;
                         }
-                        projectile2.Launch(launcher, drawPos, c, currentTarget, projectileHitFlags, equipment, null);
+                        projectile2.Launch(launcher, drawPos, c, currentTarget, projectileHitFlags, true, equipment, null);
                         return true;
                     }
                 }
@@ -272,13 +272,13 @@ namespace TiberiumRim
             ThingDef targetCoverDef = (randomCoverToMissInto == null) ? null : randomCoverToMissInto.def;
             if (!Rand.Chance(shotReport.AimOnTargetChance_IgnoringPosture))
             {
-                shootLine.ChangeDestToMissWild(shotReport.AimOnTargetChance_StandardTarget);
+                shootLine.ChangeDestToMissWild_NewTemp(shotReport.AimOnTargetChance_StandardTarget, true, this.caster.Map);
                 ProjectileHitFlags projectileHitFlags2 = ProjectileHitFlags.NonTargetWorld;
                 if (Rand.Chance(0.5f) && this.canHitNonTargetPawnsNow)
                 {
                     projectileHitFlags2 |= ProjectileHitFlags.NonTargetPawns;
                 }
-                projectile2.Launch(launcher, drawPos, shootLine.Dest, this.currentTarget, projectileHitFlags2, equipment, targetCoverDef);
+                projectile2.Launch(launcher, drawPos, shootLine.Dest, this.currentTarget, projectileHitFlags2, true, equipment, targetCoverDef);
                 return true;
             }
             if (currentTarget.Thing != null && currentTarget.Thing.def.category == ThingCategory.Pawn && !Rand.Chance(shotReport.PassCoverChance))
@@ -288,7 +288,7 @@ namespace TiberiumRim
                 {
                     projectileHitFlags3 |= ProjectileHitFlags.NonTargetPawns;
                 }
-                projectile2.Launch(launcher, drawPos, randomCoverToMissInto, this.currentTarget, projectileHitFlags3, equipment, targetCoverDef);
+                projectile2.Launch(launcher, drawPos, randomCoverToMissInto, this.currentTarget, projectileHitFlags3, true, equipment, targetCoverDef);
                 return true;
             }
             ProjectileHitFlags projectileHitFlags4 = ProjectileHitFlags.IntendedTarget;
@@ -302,11 +302,11 @@ namespace TiberiumRim
             }
             if (this.currentTarget.Thing != null)
             {
-                projectile2.Launch(launcher, drawPos, this.currentTarget, this.currentTarget, projectileHitFlags4, equipment, targetCoverDef);
+                projectile2.Launch(launcher, drawPos, this.currentTarget, this.currentTarget, projectileHitFlags4, true, equipment, targetCoverDef);
             }
             else
             {
-                projectile2.Launch(launcher, drawPos, shootLine.Dest, this.currentTarget, projectileHitFlags4, equipment, targetCoverDef);
+                projectile2.Launch(launcher, drawPos, shootLine.Dest, this.currentTarget, projectileHitFlags4, true, equipment, targetCoverDef);
             }
             return true;
         }
@@ -340,9 +340,9 @@ namespace TiberiumRim
         public LocalTargetInfo AdjustedTarget(LocalTargetInfo intended, ref ShootLine shootLine, out ProjectileHitFlags flags)
         {
             flags = ProjectileHitFlags.NonTargetWorld;
-            if (verbProps.forcedMissRadius > 0.5f)
+            if (verbProps.ForcedMissRadius > 0.5f)
             {
-                float num = VerbUtility.CalculateAdjustedForcedMiss(verbProps.forcedMissRadius, intended.Cell - caster.Position);
+                float num = VerbUtility.CalculateAdjustedForcedMiss(verbProps.ForcedMissRadius, intended.Cell - caster.Position);
                 if (num > 0.5f)
                 {
                     if (Rand.Chance(0.5f))
@@ -364,7 +364,7 @@ namespace TiberiumRim
             {
                 if (Rand.Chance(0.5f) && canHitNonTargetPawnsNow)
                     flags |= ProjectileHitFlags.NonTargetPawns;
-                shootLine.ChangeDestToMissWild(shotReport.AimOnTargetChance_StandardTarget);
+                shootLine.ChangeDestToMissWild_NewTemp(shotReport.AimOnTargetChance_StandardTarget, true, this.caster.Map);
                 return GetTargetFromPos(shootLine.Dest, caster.Map);
             }
             if (intended.Thing != null && intended.Thing.def.category == ThingCategory.Pawn && !Rand.Chance(shotReport.PassCoverChance))

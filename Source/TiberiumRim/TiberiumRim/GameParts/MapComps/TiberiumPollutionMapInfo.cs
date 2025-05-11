@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using LudeonTK;
 using RimWorld;
 using RimWorld.BaseGen;
 using RimWorld.Planet;
@@ -300,7 +301,7 @@ namespace TiberiumRim
                 arr = MapSerializeUtility.SerializeUshort(map, c => tempGrid[map.cellIndices.CellToIndex(c)]);
             }
 
-            DataExposeUtility.ByteArray(ref arr, "pollution");
+            DataExposeUtility.LookByteArray(ref arr, "pollution");
 
             if (Scribe.mode == LoadSaveMode.LoadingVars)
             {

@@ -85,7 +85,7 @@ namespace TiberiumRim
             }
         }
 
-        protected override void Impact(Thing hitThing)
+        protected override void Impact(Thing hitThing, bool blockedByShield)
         {
             Map map = base.Map;
             IntVec3 position = base.Position;
@@ -102,8 +102,8 @@ namespace TiberiumRim
             if (pawn != null && pawn.stances != null && pawn.BodySize <= this.def.projectile.StoppingPower + 0.001f)
             {
                 if(pawn.RaceProps.IsMechanoid)
-                    pawn.stances.stunner.StunFor_NewTmp(50, this.Launcher, false, true);
-                pawn.stances.StaggerFor(95);
+                    pawn.stances.stunner.StunFor(50, this.Launcher, false, true);
+                pawn.stances.stagger.StaggerFor(95);
             }
 
             //Arc To Other Things
@@ -125,14 +125,14 @@ namespace TiberiumRim
                     Projectile_TeslaArc newArc = (Projectile_TeslaArc)GenSpawn.Spawn(this.def, hitThing.Position, hitThing.Map);
                     newArc.ArcType = ArcType + 1;
                     var equipment = (launcher as Pawn).equipment.AllEquipmentListForReading.Find(t => t.def == equipmentDef);
-                    newArc.Launch(this.launcher, thing, thing, ProjectileHitFlags.All, equipment);
+                    newArc.Launch(this.launcher, thing, thing, ProjectileHitFlags.All, true, equipment);
                 }
             }
         }
 
-        public override void Draw()
+        protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
-            //base.Draw();
+            //base.DrawAt(Vector3 drawLoc, bool flip = false);
             DrawArc(origin.ToIntVec3(), destination.ToIntVec3());
         }
 

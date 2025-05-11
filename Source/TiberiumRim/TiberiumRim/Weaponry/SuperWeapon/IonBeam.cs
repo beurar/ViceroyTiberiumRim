@@ -70,9 +70,9 @@ namespace TiberiumRim
                 var thing = list[i];
                 thing.TakeDamage(dInfo);
             }
-            if (FireUtility.TryStartFireIn(cell, Map, TRUtils.Range(0.1f, 0.5f)))
+            if (FireUtility.TryStartFireIn(cell, Map, TRUtils.Range(0.1f, 0.5f), this))
             {
-                MoteThrown moteThrown = (MoteThrown)ThingMaker.MakeThing(ThingDefOf.Mote_Smoke, null);
+                MoteThrown moteThrown = (MoteThrown)ThingMaker.MakeThing(ThingDefOf.Mote_PowerBeam, null);
                 moteThrown.Scale = TRUtils.Range(3f, 5.5f);
                 moteThrown.rotationRate = TRUtils.Range(-30f, 30f);
                 moteThrown.exactPosition = realPos;
@@ -86,7 +86,7 @@ namespace TiberiumRim
 
         public IntVec3 CurrentPosition => realPos.ToIntVec3();
 
-        public override void Draw()
+        protected override void DrawAt(Vector3 drawPos, bool flip = false)
         {
             float beamHeight = ((float)Map.Size.z - DrawPos.z) * 1.41421354f;
 

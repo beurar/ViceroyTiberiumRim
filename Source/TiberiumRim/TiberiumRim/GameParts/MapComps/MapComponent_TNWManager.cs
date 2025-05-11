@@ -5,6 +5,7 @@ using System.Text;
 using Verse;
 using RimWorld;
 using UnityEngine;
+using LudeonTK;
 
 namespace TiberiumRim
 {
@@ -99,8 +100,8 @@ namespace TiberiumRim
                             var newTnwb = thing.TryGetComp<CompTNW>();
                             if (newTnwb != null && !closedSet.Contains(newTnwb) && newTnwb.ConnectsTo(tnwb))
                             {
-                                map.mapDrawer.MapMeshDirty(c, MapMeshFlag.Buildings);
-                                map.mapDrawer.MapMeshDirty(c, MapMeshFlag.Things);
+                                map.mapDrawer.MapMeshDirty(c, DefDatabase<MapMeshFlagDef>.GetNamed("Buildings"));
+                                map.mapDrawer.MapMeshDirty(c, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
                                 tnwb.StructureSet.AddNewStructure(newTnwb, c);
                                 newTnwb.StructureSet.AddNewStructure(tnwb, c + IntVec3.North);
                                 openSet.Add(newTnwb);

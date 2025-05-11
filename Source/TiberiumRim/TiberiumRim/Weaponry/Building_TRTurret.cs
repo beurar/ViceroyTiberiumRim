@@ -133,9 +133,9 @@ namespace TiberiumRim
             }
         }
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             foreach(TurretGun gun in turrets)
             {
                 gun.Draw();
@@ -276,9 +276,9 @@ namespace TiberiumRim
                     defaultDesc = "CommandSetForceAttackTargetDesc".Translate(),
                     icon = ContentFinder<Texture2D>.Get("UI/Commands/Attack", true),
                     targetingParams = TargetingParameters.ForAttackAny(),
-                    action = delegate (Thing thing)
+                    action = delegate (LocalTargetInfo targetInfo)
                     {
-                        OrderAttack(thing);
+                        OrderAttack(targetInfo.Thing);
                     }
                 };
             }

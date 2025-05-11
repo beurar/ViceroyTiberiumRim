@@ -15,9 +15,9 @@ namespace TiberiumRim
             base.DrawWorker(loc, rot, thingDef, thing, extraRotation);
         }
 
-        public override void Print(SectionLayer layer, Thing thing)
+        public override void Print(SectionLayer layer, Thing thing, float extraRotation)
         {
-            base.Print(layer, thing);
+            base.Print(layer, thing, extraRotation);
         }
     }
 }

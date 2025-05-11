@@ -8,6 +8,7 @@ using Verse.AI;
 using RimWorld;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Net.NetworkInformation;
 
 namespace TiberiumRim
 {
@@ -255,9 +256,9 @@ namespace TiberiumRim
             }
         }
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             if (Find.Selector.IsSelected(this) && Find.CameraDriver.CurrentZoom <= CameraZoomRange.Middle)
             {
                 GenDraw.FillableBarRequest r = default(GenDraw.FillableBarRequest);
@@ -368,12 +369,12 @@ namespace TiberiumRim
                 defaultDesc = "TR_HarvesterRefineryDesc".Translate(),
                 icon = TiberiumContent.HarvesterRefinery,
                 targetingParams = RefineryTargetInfo.ForHarvester(),
-                action = delegate (Thing thing)
+                action = delegate (LocalTargetInfo targetInfo)
                 {
-                    if (thing == null) return;
-                    if (thing is Building building)
+                    if (targetInfo == null) return;
+                    if (targetInfo.Thing is Building building)
                     {
-                        var refinery = thing.TryGetComp<CompTNW_Refinery>();
+                        var refinery = targetInfo.Thing.TryGetComp<CompTNW_Refinery>();
                         if(refinery != null)
                             SetMainRefinery(building, refinery, RefineryComp);
                         //UpdateRefineries(b);

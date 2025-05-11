@@ -66,13 +66,13 @@ namespace TiberiumRim
         private float PositionPct => ExactPosition.ToIntVec3().DistanceTo(intendedTarget.Cell) / Launcher.Position.DistanceTo(intendedTarget.Cell);
         private float RangePct => intendedTarget.Cell.DistanceTo(this.Launcher.Position) / FlameTurret.MainGun.props.range;
 
-        protected override void Impact(Thing hitThing)
+        protected override void Impact(Thing hitThing, bool blockedByShield)
         {
             base.Impact(hitThing);
         }
 
         protected MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-        public override void Draw()
+        protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
 
             Color color = Color.white;

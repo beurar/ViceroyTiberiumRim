@@ -31,7 +31,7 @@ namespace TiberiumRim
         private float RocketOffsetY => 1;
         private float RocketLiftOffset => 0;
 
-        public override void Draw()
+        protected override void DrawAt(Vector3 drawLoc, bool flip = false)
         {
             Material nukeMat = Graphic.MatSingle;
             nukeMat.SetTextureOffset("_MainTex", new Vector2(0.25f, RocketOffsetY));

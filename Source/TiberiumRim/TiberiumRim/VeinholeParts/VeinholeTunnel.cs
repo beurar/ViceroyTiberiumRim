@@ -59,9 +59,9 @@ namespace TiberiumRim
             }
         }
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
         }
     }
 }

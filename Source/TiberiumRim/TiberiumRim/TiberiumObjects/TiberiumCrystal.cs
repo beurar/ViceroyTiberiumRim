@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using LudeonTK;
 using RimWorld;
 using UnityEngine;
 using Verse;
@@ -325,7 +326,7 @@ namespace TiberiumRim
                                 {
                                     if (maxMeshCount != 25)
                                     {
-                                        Log.Error(this.def + " must have MaxMeshCount that is a perfect square.", false);
+                                        Log.Error(this.def + " must have MaxMeshCount that is a perfect square.");
                                     }
                                     else
                                     {
