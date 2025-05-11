@@ -204,7 +204,7 @@ namespace TiberiumRim
             if (!parent.Spawned) return;
             if (signal == "PowerTurnedOn" || signal == "PowerTurnedOff" || signal == "FlickedOn" || signal == "FlickedOff" || signal == "Refueled" || signal == "RanOutOfFuel" || signal == "ScheduledOn" || signal == "ScheduledOff")
             {
-                parent.Map.mapDrawer.MapMeshDirty(parent.Position, MapMeshFlag.Things);
+                parent.Map.mapDrawer.MapMeshDirty(parent.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
             }
         }
 

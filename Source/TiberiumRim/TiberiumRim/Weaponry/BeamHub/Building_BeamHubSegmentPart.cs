@@ -105,14 +105,14 @@ namespace TiberiumRim
             {
                 active = true;
                 GenSpawn.Spawn(parentHubDef.beamHub.beamDef, Position, Map);
-                Map.mapDrawer.MapMeshDirty(Position, MapMeshFlag.Buildings);
+                Map.mapDrawer.MapMeshDirty(Position, DefDatabase<MapMeshFlagDef>.GetNamed("Buildings"));
             }
 
             if (!ShouldBeActive && active)
             {
                 active = false;
                 Position.GetFirstThing(Map, parentHubDef.beamHub.beamDef)?.DeSpawn();
-                Map.mapDrawer.MapMeshDirty(Position, MapMeshFlag.Buildings);
+                Map.mapDrawer.MapMeshDirty(Position, DefDatabase<MapMeshFlagDef>.GetNamed("Buildings"));
             }
         }
 

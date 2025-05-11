@@ -68,7 +68,7 @@ namespace TiberiumRim
                     };
                     Reservations.Reserve(drone, job, damagedMech);
                     drone.jobs.StartJob(job);
-                    parent.Map.mapDrawer.MapMeshDirty(parent.Position, MapMeshFlag.Things);
+                    parent.Map.mapDrawer.MapMeshDirty(parent.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace TiberiumRim
         public void StoreDrone(RepairDrone drone)
         {
             MainGarage.TryPushToGarage(drone);
-            parent.Map.mapDrawer.MapMeshDirty(parent.Position, MapMeshFlag.Things);
+            parent.Map.mapDrawer.MapMeshDirty(parent.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
         }
 
         private void PrintIdleDrones(SectionLayer layer)

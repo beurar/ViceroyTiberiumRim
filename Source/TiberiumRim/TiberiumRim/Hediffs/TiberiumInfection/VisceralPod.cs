@@ -148,7 +148,7 @@ namespace TiberiumRim
             IntVec3 dest = Position.RandomAdjacentCell8Way();
             MakeFilth();
             InnerContainer.TryDropAll(dest, Map, ThingPlaceMode.Near);
-            Map.mapDrawer.MapMeshDirty(Position, MapMeshFlag.Things, true, false);
+            Map.mapDrawer.MapMeshDirty(Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"), true, false);
         }
 
         private void MakeVisceroids()

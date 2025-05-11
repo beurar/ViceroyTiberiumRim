@@ -12,7 +12,7 @@ namespace TiberiumRim
         public SectionLayer_TiberiumNetworkGrid(Section section) : base(section)
         {
             this.requireAddToMapMesh = false;
-            this.relevantChangeTypes = MapMeshFlag.Buildings;
+            this.relevantChangeTypes = DefDatabase<MapMeshFlagDef>.GetNamed("Buildings");
         }
 
         public override void DrawLayer()
