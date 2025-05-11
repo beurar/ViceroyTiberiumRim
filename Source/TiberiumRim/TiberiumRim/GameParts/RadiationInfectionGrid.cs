@@ -83,8 +83,8 @@ namespace TiberiumRim
 
             Scribe_Deep.Look(ref affectedCells, "affectedHediffCells");
             Scribe_Values.Look(ref mapCells, "mapCells");
-            DataExposeUtility.ByteArray(ref radiationBytes, "radiationBytes");
-            DataExposeUtility.ByteArray(ref infectionBytes, "infectionBytes");
+            DataExposeUtility.LookByteArray(ref radiationBytes, "radiationBytes");
+            DataExposeUtility.LookByteArray(ref infectionBytes, "infectionBytes");
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

@@ -215,7 +215,7 @@ namespace TiberiumRim
                 targetScanFlags |= TargetScanFlags.NeedLOSToAll;
                 targetScanFlags |= TargetScanFlags.LOSBlockableByGas;
             }
-            if (AttackVerb.IsIncendiary())
+            if (AttackVerb.verbProps.ai_BeamIsIncendiary)
             {
                 targetScanFlags |= TargetScanFlags.NeedNonBurning;
             }

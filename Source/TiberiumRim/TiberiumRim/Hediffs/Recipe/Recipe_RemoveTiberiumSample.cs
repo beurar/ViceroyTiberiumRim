@@ -14,7 +14,8 @@ namespace TiberiumRim
 
         public override IEnumerable<BodyPartRecord> GetPartsToApplyOn(Pawn pawn, RecipeDef recipe)
         {
-            var hediffs = pawn.health.hediffSet.GetHediffs<Hediff_CrystallizingPart>();
+            List<Hediff_CrystallizingPart> hediffs = new List<Hediff_CrystallizingPart>();
+            pawn.health.hediffSet.GetHediffs<Hediff_CrystallizingPart>(ref hediffs);
             foreach (var hediff in hediffs)
             {
                 if (!hediff.Part.IsCorePart && !hediff.SampleTaken && hediff.Severity < 0.95f)

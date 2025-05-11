@@ -236,7 +236,7 @@ namespace TiberiumRim
 
         public void PrintForGrid(SectionLayer layer)
         {
-            TiberiumContent.TiberiumNetworkPipesOverlay.Print(layer, this.parent);
+            TiberiumContent.TiberiumNetworkPipesOverlay.Print(layer, this.parent, 0f);
         }
 
         public override void PostDraw()
@@ -263,7 +263,7 @@ namespace TiberiumRim
         public override void PostPrintOnto(SectionLayer layer)
         {
             base.PostPrintOnto(layer);
-            TiberiumContent.TiberiumNetworkPipes.Print(layer, parent);
+            TiberiumContent.TiberiumNetworkPipes.Print(layer, parent, 0f);
         }
 
         public override string CompInspectStringExtra()

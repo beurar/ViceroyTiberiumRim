@@ -45,9 +45,9 @@ namespace TiberiumRim
         public override bool[] DrawBools => new bool[] { true, chargeAmount > 0 };
         public override bool ShouldDoEffecters => true;
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
             if (CurrentTarget.IsValid && CurrentTarget.Thing is Pawn p)
             {
                 DrawMarkedForDeath(p);

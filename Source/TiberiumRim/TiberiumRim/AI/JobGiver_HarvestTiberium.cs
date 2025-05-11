@@ -121,7 +121,7 @@ namespace TiberiumRim
             harvest.FailOnDespawnedNullOrForbidden(TargetIndex.A);
             harvest.FailOnCannotTouch(TargetIndex.A, PathEndMode.Touch);
             harvest.FailOn(() => FailOn);
-            harvest.WithEffect(EffecterDefOf.Harvest, TargetIndex.A);
+            harvest.WithEffect(EffecterDefOf.Harvest_Plant, TargetIndex.A);
             harvest.defaultCompleteMode = ToilCompleteMode.Never;
             yield return harvest;
             yield return Toils_Jump.Jump(extractTarget);

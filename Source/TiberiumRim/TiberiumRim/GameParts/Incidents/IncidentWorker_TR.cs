@@ -51,7 +51,7 @@ namespace TiberiumRim
             LetterDef letterDef = parms.customLetterDef ?? def.letterDef;
 
             if (letterLabel.NullOrEmpty() || letterText.NullOrEmpty())
-                Log.Error("Sending standard incident letter with no label or text.", false);
+                Log.Error("Sending standard incident letter with no label or text.");
 
             //NamedArgument[] letterLabelArgs = textArgs.Select(t => t.Named("LETTERLABEL")).ToArray();
             //NamedArgument[] letterTextArgs = textArgs.Select(t => t.Named("LETTERTEXT")).ToArray();

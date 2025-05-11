@@ -28,7 +28,7 @@ namespace TiberiumRim
             map = (Map) parms.target;
             if (!DropCellFinder.TryFindRaidDropCenterClose(out spawnLoc, map, false, false, true, -1))
             {
-                spawnLoc = DropCellFinder.FindRaidDropCenterDistant_NewTemp(map, false);
+                spawnLoc = DropCellFinder.FindRaidDropCenterDistant(map, false);
             }
 
             ActionComposition composition = new ActionComposition("VolkovArrival");

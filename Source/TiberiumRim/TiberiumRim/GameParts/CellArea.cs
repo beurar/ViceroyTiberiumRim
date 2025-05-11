@@ -80,7 +80,7 @@ namespace TiberiumRim
             Scribe_Values.Look(ref mapSizeX, "mapSizeX");
             Scribe_Values.Look(ref mapSizeZ, "mapSizeZ");
 
-            DataExposeUtility.BoolArray(ref cellBools, mapSizeZ * mapSizeX, "cellBools");
+            DataExposeUtility.LookBoolArray(ref cellBools, mapSizeZ * mapSizeX, "cellBools");
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

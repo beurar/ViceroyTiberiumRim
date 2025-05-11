@@ -59,10 +59,17 @@ namespace TiberiumRim
             return Damage().Any();
         }
 
+        private List<Hediff> tmpDamageHediffs = new List<Hediff>();
+
         public IEnumerable<Hediff> Damage()
         {
-            return from x in health?.hediffSet?.GetHediffs<Hediff>() where x is Hediff_Injury || x is Hediff_MissingPart select x;
+            tmpDamageHediffs.Clear();
+            health?.hediffSet?.GetHediffs(ref tmpDamageHediffs, x =>
+                x is Hediff_Injury || x is Hediff_MissingPart);
+
+            return tmpDamageHediffs;
         }
-     
+
+
     }
 }

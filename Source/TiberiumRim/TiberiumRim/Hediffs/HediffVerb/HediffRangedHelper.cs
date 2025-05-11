@@ -25,7 +25,7 @@ namespace TiberiumRim
                 {
                     if (verb.IsMeleeAttack) continue;
                     TargetScanFlags targetScanFlags = TargetScanFlags.NeedLOSToPawns | TargetScanFlags.NeedLOSToNonPawns | TargetScanFlags.NeedThreat;
-                    if (verb.IsIncendiary())
+                    if (verb.verbProps.ai_BeamIsIncendiary)
                         targetScanFlags |= TargetScanFlags.NeedNonBurning;
 
                     Thing bestTarget = (Thing)AttackTargetFinder.BestShootTargetFromCurrentPosition(driver.pawn, targetScanFlags, null);

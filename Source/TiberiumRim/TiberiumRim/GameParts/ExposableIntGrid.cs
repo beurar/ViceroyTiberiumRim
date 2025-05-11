@@ -51,7 +51,7 @@ namespace TiberiumRim
             }
 
             Scribe_Values.Look(ref mapCells, "mapCells");
-            DataExposeUtility.ByteArray(ref savedBytes, "savedBytes");
+            DataExposeUtility.LookByteArray(ref savedBytes, "savedBytes");
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

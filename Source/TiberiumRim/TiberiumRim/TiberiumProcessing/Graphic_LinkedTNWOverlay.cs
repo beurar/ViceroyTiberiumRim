@@ -35,7 +35,7 @@ namespace TiberiumRim
             }
         }
 
-        public override void Print(SectionLayer layer, Thing thing)
+        public override void Print(SectionLayer layer, Thing thing, float extraRotation)
         {
             var comp = thing.TryGetComp<CompTNW>();
             foreach (IntVec3 cell in comp.InnerConnectionCells)

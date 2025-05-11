@@ -101,7 +101,7 @@ namespace TiberiumRim
             TiberiumRimMod mod = LoadedModManager.GetMod<TiberiumRimMod>();
             if (mod == null)
             {
-                Log.Error("LoadedModManager.GetMod<TiberiumRimMod>() failed", false);
+                Log.Error("LoadedModManager.GetMod<TiberiumRimMod>() failed");
                 return "";
             }
             return mod.Content.RootDir;
@@ -262,16 +262,16 @@ namespace TiberiumRim
             Body = null;
             if (pawn.def.defName != "Human")
             {
-                PawnGraphicSet graphicSet = pawn.Drawer.renderer.graphics;
-                string headPath = graphicSet.headGraphic.path + "_TibHead";
-                string bodyPath = graphicSet.nakedGraphic.path + "_TibBody";
+                PawnRenderer pawnRenderer = pawn.Drawer.renderer;
+                string headPath = pawnRenderer.HeadGraphic.path + "_TibHead";
+                string bodyPath = pawnRenderer.BodyGraphic.path + "_TibBody";
                 Head = GraphicDatabase.Get(typeof(Graphic_Multi), headPath, ShaderDatabase.Cutout, Vector2.one, Color.white, Color.white);
                 Body = GraphicDatabase.Get(typeof(Graphic_Multi), bodyPath, ShaderDatabase.Cutout, Vector2.one, Color.white, Color.white);
             }
             else
             {
-                CrownType head = pawn.story.crownType;
-                string headPath = pawn.story.HeadGraphicPath;
+                HeadTypeDef head = pawn.story.headType;
+                string headPath = pawn.story.headType.graphicPath;
                 string headResolved;
                 BodyTypeDef body = pawn.story.bodyType;
                 string bodyResolved;
@@ -572,7 +572,7 @@ namespace TiberiumRim
         {
             if (graphic is Graphic_Linked || graphic is Graphic_Appearances)
             {
-                graphic.Print(layer, thing);
+                graphic.Print(layer, thing, 0f);
                 return;
             }
             if (graphic is Graphic_Random rand)
@@ -581,7 +581,7 @@ namespace TiberiumRim
             Printer_Plane.PrintPlane(layer, info.drawPos, info.drawSize, info.drawMat, info.rotation, info.flipUV, null, null, 0.01f, 0f);
             if (graphic.ShadowGraphic != null && thing != null)
             {
-                graphic.ShadowGraphic.Print(layer, thing);
+                graphic.ShadowGraphic.Print(layer, thing, 0f);
             }
             thing.AllComps.ForEach(c => c.PostPrintOnto(layer));
         }
@@ -791,7 +791,7 @@ namespace TiberiumRim
         public static bool IsBlocked(this IntVec3 cell, Map map, out bool byPlant)
         {
             byPlant = false;
-            if (!map.pathGrid.Walkable(cell))
+            if (!map.pathing.Normal.pathGrid.Walkable(cell))
             {
                 return true;
             }

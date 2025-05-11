@@ -57,8 +57,8 @@ namespace TiberiumRim
             //Body for animals
             if (Head == null)
             {
-                Vector2 drawSize = pawn.Drawer.renderer.graphics.nakedGraphic.drawSize;
-                string path = pawn.Drawer.renderer.graphics.nakedGraphic.path;
+                Vector2 drawSize = pawn.Drawer.renderer.BodyGraphic.drawSize;
+                string path = pawn.Drawer.renderer.BodyGraphic.path;
                 if (ContentFinder<Texture2D>.Get(path + "_TibBody", false) != null) Body = GraphicDatabase.Get(typeof(Graphic_Multi), path + "_TibBody", ShaderDatabase.Cutout, drawSize, Color.white, Color.white);
                 else if (ContentFinder<Texture2D>.Get("Pawns/TiberiumOverlays" + pawn.def.defName + "/" + pawn.def.defName + "_TibBody", false) != null)
                     Body = GraphicDatabase.Get(typeof(Graphic_Multi), "Pawns/TiberiumOverlays" + pawn.def.defName + "/" + pawn.def.defName + "_TibBody", ShaderDatabase.Cutout, drawSize, Color.white, Color.white);

@@ -121,7 +121,7 @@ namespace TiberiumRim
             {
                 Vector3 drawPos = parent.DrawPos + new Vector3(0, AltitudeLayer.BuildingOnTop.AltitudeFor(), 0) + Props.renderOffsets[i];
                 RepairDrone drone = DroneGarage[i] as RepairDrone;
-                Graphic droneGraphic = drone.Drawer.renderer.graphics.nakedGraphic;
+                Graphic droneGraphic = drone.Drawer.renderer.renderTree.BodyGraphic;
                 Material mat = droneGraphic.MatSouth;
                 Printer_Plane.PrintPlane(layer, drawPos, new Vector2(Props.renderSize, Props.renderSize), mat, 0, false);
             }
@@ -144,7 +144,7 @@ namespace TiberiumRim
                 action = delegate
                 {
                     TryAddMech(MakeMech(Props.mechKindDef), true);
-                    parent.Map.mapDrawer.MapMeshDirty(parent.Position, MapMeshFlag.Things);
+                    parent.Map.mapDrawer.MapMeshDirty(parent.Position, DefDatabase<MapMeshFlagDef>.GetNamed("Things"));
                 }
             };
         }

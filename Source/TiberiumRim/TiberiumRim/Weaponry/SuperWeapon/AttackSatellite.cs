@@ -36,7 +36,7 @@ namespace TiberiumRim
         {
             base.Tick();
             if(Find.WorldSelector.IsSelected(this))
-                Log.Message("Is over: " + OverTile.biome.defName, true);
+                Log.Message("Is over: " + OverTile.biome.defName);
             if (!ShouldMove) return;
             travelPct += 1f / travelTicks;
             if(travelPct >= 1)

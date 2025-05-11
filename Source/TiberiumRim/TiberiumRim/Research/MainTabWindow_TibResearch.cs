@@ -503,7 +503,7 @@ namespace TiberiumRim
                     if (Widgets.ButtonInvisible(thingRect))
                     {
                         Dialog_InfoCard.Hyperlink hyperlink = new Dialog_InfoCard.Hyperlink(thing);
-                        hyperlink.OpenDialog();
+                        hyperlink.ActivateHyperlink();
                     }
 
                     rowIndex += 1;

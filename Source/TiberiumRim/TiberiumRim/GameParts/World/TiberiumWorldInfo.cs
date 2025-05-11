@@ -46,7 +46,7 @@ namespace TiberiumRim
                 Buffer.BlockCopy(tiberiumGrid, 0, dataBytes, 0, worldTiles * 4);
             }
 
-            DataExposeUtility.ByteArray(ref dataBytes, "tiberiumWorldBytes");
+            DataExposeUtility.LookByteArray(ref dataBytes, "tiberiumWorldBytes");
 
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

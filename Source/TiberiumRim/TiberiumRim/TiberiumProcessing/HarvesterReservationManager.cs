@@ -101,7 +101,7 @@ namespace TiberiumRim
 
             Finished = false;
             Current = 0;
-            bool PassCheck(IntVec3 x) => x.IsValid && map.pathGrid.Walkable(x) && !Finished;
+            bool PassCheck(IntVec3 x) => x.IsValid && map.pathing.Normal.pathGrid.Walkable(x) && !Finished;
             void Processor(IntVec3 c)
             {
                 RETRY:
@@ -114,7 +114,7 @@ namespace TiberiumRim
                 if (QueueFull(CurHarvester) || CurHarvester.CurrentPriority != HarvesterPriority.Harvest) { Current++; goto RETRY; }
 
                 TiberiumCrystal crystal = c.TryGetTiberiumFor(CurHarvester);
-                if (crystal != null && !IsQueued(crystal) && CurHarvester.CanReach(c, PathEndMode.Touch, Danger.Deadly, false, TraverseMode.PassDoors))
+                if (crystal != null && !IsQueued(crystal) && CurHarvester.CanReach(c, PathEndMode.Touch, Danger.Deadly, false, false, TraverseMode.PassDoors))
                 {
                     Enqueue(crystal, CurHarvester);
                 }

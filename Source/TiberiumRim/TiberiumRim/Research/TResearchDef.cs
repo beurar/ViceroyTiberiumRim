@@ -303,7 +303,7 @@ namespace TiberiumRim
                         DoMenuOptions(targetRect, PossibleMainTargets[i], true);
                         if (Widgets.ButtonInvisible(targetRect))
                         {
-                            new Dialog_InfoCard.Hyperlink(PossibleMainTargets[i]).OpenDialog();
+                            new Dialog_InfoCard.Hyperlink(PossibleMainTargets[i]).ActivateHyperlink();
                         }
                         curY += targetHeight;
                     }
@@ -332,7 +332,7 @@ namespace TiberiumRim
                         DoMenuOptions(targetRect, creationTasks.thingsToCreate[i].def, false);
                         if (Widgets.ButtonInvisible(targetRect))
                         {
-                            new Dialog_InfoCard.Hyperlink(creationTasks.thingsToCreate[i].def).OpenDialog();
+                            new Dialog_InfoCard.Hyperlink(creationTasks.thingsToCreate[i].def).ActivateHyperlink();
                         }
                         curY += targetHeight;
                     }

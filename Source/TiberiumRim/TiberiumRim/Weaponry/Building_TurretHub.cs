@@ -67,9 +67,9 @@ namespace TiberiumRim
 
         public bool AcceptsTurrets => hubTurrets.Count + AnticipatedBlueprintsOrFrames.Count < def.turret.hub.maxTurrets;
 
-        public override void Draw()
+        public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
-            base.Draw();
+            base.DynamicDrawPhase(drawPhase);
         }
 
         public override void Print(SectionLayer layer)

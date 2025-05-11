@@ -22,7 +22,7 @@ namespace TiberiumRim
         public override void PostAdd(DamageInfo? dinfo)
         {
             //Base PostAdd() does fixed crap that we dont want, however we need the base.base.PostAdd()
-            if (def.disablesNeed != null)
+            if (def.disablesNeeds != null)
             {
                 pawn.needs.AddOrRemoveNeedsAsAppropriate();
             }
@@ -35,7 +35,7 @@ namespace TiberiumRim
             }
             if (Part == null)
             {
-                Log.Error(def.defName + " has null Part. It should be set before PostAdd.", false);
+                Log.Error(def.defName + " has null Part. It should be set before PostAdd.");
                 return;
             }
 

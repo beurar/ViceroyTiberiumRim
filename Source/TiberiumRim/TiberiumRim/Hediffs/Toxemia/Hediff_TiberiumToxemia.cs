@@ -47,13 +47,33 @@ namespace TiberiumRim
         //private string CountInfo => "T:" + TotalAffectedParts + "|B:" + pawn.def.race.body.AllParts.Count + "|NM:" + pawn.HealthComp().NonMisingPartsCount + "|[" + CrystallizingParts.Count + "/" + affectedPartsCount + "]";
         
         public override Color LabelColor => Color.Lerp(mainColor, mutationColor, ToxemiaSeverity);
-        public override bool ShouldRemove => pawn.health.hediffSet.GetHediffs<Hediff_CauseToxemia>().EnumerableNullOrEmpty();//!(HasRadiation || HasCrystallization);
+        public override bool ShouldRemove => pawn.health.hediffSet.HasHediff<Hediff_CauseToxemia>();//!(HasRadiation || HasCrystallization);
 
         private float CrystallizedPercent => TotalAffectedParts/(float)pawn.kindDef.RaceProps.body.AllParts.Count;//(float)affectedPartsCount / pawn.kindDef.RaceProps.body.AllParts.Count;
         public float ToxemiaSeverity => (CrystallizedPercent + (Radiation?.Severity ?? 0f)) / 2;
 
-        private IEnumerable<Hediff_CrystallizingPart> Crystallizing => pawn.health.hediffSet.GetHediffs<Hediff_CrystallizingPart>();
-        private IEnumerable<Hediff_CrystallizedPart> Crystallized => pawn.health.hediffSet.GetHediffs<Hediff_CrystallizedPart>();
+        List<Hediff_CrystallizingPart> tmpCrystallizingParts = new List<Hediff_CrystallizingPart>();
+        private IEnumerable<Hediff_CrystallizingPart> Crystallizing
+        {
+            get
+            {
+                tmpCrystallizingParts.Clear();
+                pawn.health.hediffSet.GetHediffs(ref tmpCrystallizingParts);
+                return tmpCrystallizingParts;
+            }
+        }
+
+        private List<Hediff_CrystallizedPart> tmpCrystallizedParts = new List<Hediff_CrystallizedPart>();
+
+        private IEnumerable<Hediff_CrystallizedPart> Crystallized
+        {
+            get
+            {
+                tmpCrystallizedParts.Clear();
+                pawn.health.hediffSet.GetHediffs(ref tmpCrystallizedParts);
+                return tmpCrystallizedParts;
+            }
+        }
 
         private int TotalAffectedParts => Crystallizing.SelectMany(c => c.Part.AllChildParts(true)).Union(Crystallized.SelectMany(c => c.Part.AllChildParts(true))).Count();
 
@@ -160,7 +180,8 @@ namespace TiberiumRim
 
         public static int? TicksUntilDeath(Pawn pawn)
         {
-            var hediffs = pawn.health.hediffSet.GetHediffs<Hediff_CrystallizingPart>().ToList();
+            List<Hediff_CrystallizingPart> hediffs = new List<Hediff_CrystallizingPart>();
+            pawn.health.hediffSet.GetHediffs<Hediff_CrystallizingPart>(ref hediffs);
             if (!hediffs.Any()) return null;
             var hediff = hediffs.MinBy(h => h.Part.DistanceToCore());
 

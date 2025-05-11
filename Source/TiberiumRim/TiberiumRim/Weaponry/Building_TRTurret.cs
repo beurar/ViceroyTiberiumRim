@@ -54,7 +54,7 @@ namespace TiberiumRim
         public virtual CompRefuelable RefuelComp => GetComp<CompRefuelable>();
         public new virtual CompPowerTrader PowerComp => GetComp<CompPowerTrader>();
         public virtual CompMannable MannableComp => GetComp<CompMannable>();
-        public virtual StunHandler Stunner => stunner;
+        public virtual StunHandler Stunner => MainGun.ParentHolder.Stunner;
 
         public override void SpawnSetup(Map map, bool respawningAfterLoad)
         {

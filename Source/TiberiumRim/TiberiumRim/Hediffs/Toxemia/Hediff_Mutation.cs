@@ -21,7 +21,17 @@ namespace TiberiumRim
 
         private Comp_TRHealthCheck HealthComp => pawn.GetComp<Comp_TRHealthCheck>();
 
-        private IEnumerable<Hediff_TiberiumMutationPart> MutationParts => pawn.health.hediffSet.GetHediffs<Hediff_TiberiumMutationPart>();
+        private List<Hediff_TiberiumMutationPart> tmpMutationParts = new List<Hediff_TiberiumMutationPart>();
+
+        private IEnumerable<Hediff_TiberiumMutationPart> MutationParts
+        {
+            get
+            {
+                tmpMutationParts.Clear();
+                pawn.health.hediffSet.GetHediffs(ref tmpMutationParts);
+                return tmpMutationParts;
+            }
+        }
 
         private bool CanFinalize => (Mathf.RoundToInt(VisceralPct * 100f) + Mathf.RoundToInt(SymbioticPct * 100)) / 100 == 1;
         private int VisceralParts => MutationParts.Count(p => p.Mutation == Hediff_TiberiumMutationPart.MutationState.Visceral);
