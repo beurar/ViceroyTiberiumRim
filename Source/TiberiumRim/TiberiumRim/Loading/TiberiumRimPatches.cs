@@ -1299,11 +1299,11 @@ namespace TiberiumRim
         }
     }
 
-    [HarmonyPatch(typeof(RoomGroup))]
-    [HarmonyPatch("RemoveRoom")]
+    [HarmonyPatch(typeof(District))]
+    [HarmonyPatch("RemoveDistrict")]
     public static class AddRoomPatch
     {
-        public static void Postfix(RoomGroup __instance, Room room)
+        public static void Postfix(District __instance, Room room)
         {
             //room.Map.Tiberium().PollutionInfo.Notify_RoomGroupLostRoom(__instance, room.Group);
         }
@@ -1313,10 +1313,10 @@ namespace TiberiumRim
     [HarmonyPatch("NotifyAffectedRoomsAndRoomGroupsAndUpdateTemperature")]
     public static class NotifyAffectedRoomsAndRoomGroupsAndUpdateTemperaturePatch
     {
-        public static bool Prefix(Map ___map, List<RoomGroup> ___newRoomGroups, HashSet<RoomGroup> ___reusedOldRoomGroups)
+        public static bool Prefix(Map ___map, List<District> ___newDistricts, HashSet<District> ___reusedOldDistricts)
         {
             var pollutionInfo = ___map.Tiberium().PollutionInfo;
-            pollutionInfo.updater.Notify_UpdateRoomGroups(___newRoomGroups, ___reusedOldRoomGroups);
+            pollutionInfo.updater.Notify_UpdateRoomGroups(___newDistricts, ___reusedOldDistricts);
             return true;
         }
     }

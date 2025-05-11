@@ -49,8 +49,9 @@ namespace TiberiumRim
                         else
                             FilthMaker.TryMakeFilth(cell, Map, ThingDefOf.Filth_Dirt);
 
-                    MoteMaker.ThrowDustPuffThick(cell.ToVector3ShiftedWithAltitude(AltitudeLayer.MoteOverhead), Map,
-                        TRUtils.Range(1.5f, 3.5f), new Color(1f, 1f, 1f, 0.55f));
+                    Log.Warning("Disabled the MoteMaker.ThrowDustPuffThick here, not sure what to replace it with yet");
+                    /*MoteMaker.ThrowDustPuffThick(cell.ToVector3ShiftedWithAltitude(AltitudeLayer.MoteOverhead), Map,
+                        TRUtils.Range(1.5f, 3.5f), new Color(1f, 1f, 1f, 0.55f));*/
                 }
             if (ticksToSpawn <= Find.TickManager.TicksGame)
             {

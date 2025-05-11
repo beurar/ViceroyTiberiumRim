@@ -12,7 +12,7 @@ namespace TiberiumRim
     public class PollutionTracker
     {
         private Map map;
-        private RoomGroup roomGroup;
+        private District district;
         private int pollutionInt;
 
         private int markedDirty = 0;
@@ -23,9 +23,9 @@ namespace TiberiumRim
         private readonly HashSet<IntVec3> borderCells = new HashSet<IntVec3>();
         private readonly Dictionary<PollutionTracker, List<PollutionPasser>> ConnectedTrackers = new Dictionary<PollutionTracker, List<PollutionPasser>>();
 
-        public RoomGroup Group => roomGroup;
+        public District District => district;
 
-        private TiberiumPollutionMapInfo PollutionInfo => roomGroup.Map.Tiberium().PollutionInfo;
+        private TiberiumPollutionMapInfo PollutionInfo => district.Map.Tiberium().PollutionInfo;
 
         public int Pollution
         {
@@ -42,16 +42,16 @@ namespace TiberiumRim
             }
         }
 
-        public float Saturation => (float)Pollution / (roomGroup.CellCount * 100f);
-        public bool PolluteOutDoors => roomGroup.UsesOutdoorTemperature;
+        public float Saturation => (float)Pollution / (district.CellCount * 100f);
+        public bool PolluteOutDoors => district.OpenRoofCountStopAt(1) > 0;// was .UsesOutdoorTemperature; I assume if we find a hole in the roof it is Outdoors?
         public bool IsDirty => markedDirty > 0;
 
         public HashSet<IntVec3> BorderCellsWithoutCorners => borderCells ?? RegenerateBorderCells();
 
-        public PollutionTracker(Map map, RoomGroup group, int value)
+        public PollutionTracker(Map map, District district, int value)
         {
             this.map = map;
-            roomGroup = group;
+            this.district = district;
             pollutionInt = value;
         }
 
@@ -94,7 +94,7 @@ namespace TiberiumRim
             for (int i = 0; i < 4; i++)
             {
                 Room room = (cell + GenAdj.CardinalDirections[i]).GetRoom(map);
-                if(room == null || room.Group == Group) continue;
+                if(room == null || room.Districts[0] == District) continue;
                 return room;
             }
             return null;
@@ -103,13 +103,13 @@ namespace TiberiumRim
         private HashSet<IntVec3> RegenerateBorderCells()
         {
             borderCells.Clear();
-            foreach (IntVec3 c in Group.Cells)
+            foreach (IntVec3 c in District.Cells)
             {
                 for (int i = 0; i < 4; i++)
                 {
                     IntVec3 intVec = c + GenAdj.CardinalDirections[i];
-                    Region region = (intVec).GetRegion(roomGroup.Map, RegionType.Set_Passable);
-                    if ((region == null || region.Room.Group != Group))
+                    Region region = (intVec).GetRegion(district.Map, RegionType.Set_Passable);
+                    if ((region == null || region.Room.Districts[0] != District))
                     {
                         borderCells.Add(intVec);
                     }
@@ -134,7 +134,7 @@ namespace TiberiumRim
             foreach (var cell in BorderCellsWithoutCorners)
             {
                 if (!cell.InBounds(map)) continue;
-                var building = cell.GetFirstBuilding(roomGroup.Map);
+                var building = cell.GetFirstBuilding(district.Map);
                 if (building == null) continue;
                 if (!(building is Building_Door || building is Building_Vent || building is Building_Cooler)) continue;
                 var actualRoom = OppositeRoomFrom(building.Position);
@@ -174,22 +174,22 @@ namespace TiberiumRim
         {
             if (Find.CameraDriver.CurrentZoom == CameraZoomRange.Closest)
             {
-                IntVec3 first = Group.Cells.First();
+                IntVec3 first = District.Cells.First();
                 Vector3 v = GenMapUI.LabelDrawPosFor(first);
-                GenMapUI.DrawThingLabel(v, Group.ID.ToString() + "[" + Pollution + "]", Color.red);
+                GenMapUI.DrawThingLabel(v, District.ID.ToString() + "[" + Pollution + "]", Color.red);
             }
         }
 
         public void DrawData()
         {
-            if (Group.Cells.Contains(UI.MouseCell()))
+            if (District.Cells.Contains(UI.MouseCell()))
             {
                 GenDraw.DrawFieldEdges(BorderCellsWithoutCorners.ToList(), Color.cyan);
                 GenDraw.DrawFieldEdges(ConnectedTrackers.SelectMany(t => t.Value.Select(t => t.Building.Position)).ToList(), Color.green);
-                GenDraw.DrawFieldEdges(ConnectedTrackers.SelectMany(t => t.Key.Group.Cells).Distinct().ToList(), Color.red);
+                GenDraw.DrawFieldEdges(ConnectedTrackers.SelectMany(t => t.Key.District.Cells).Distinct().ToList(), Color.red);
             }
 
-            var vec = roomGroup.Cells.First().ToVector3();
+            var vec = district.Cells.First().ToVector3();
             GenDraw.FillableBarRequest r = default;
             r.center = vec + new Vector3(0f, 0, 0.5f);
             r.size = new Vector2(1f, 0.5f);

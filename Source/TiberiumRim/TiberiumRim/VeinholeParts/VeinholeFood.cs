@@ -164,5 +164,17 @@ namespace TiberiumRim
             corpse.InnerPawn.Drawer.renderer.RenderPawnAt(DrawPos + new Vector3(0, this.def.altitudeLayer.AltitudeFor(), 0));
         }
 
+        public HistoryEventDef GiveObservedHistoryEvent(Pawn observer)
+        {
+            return HistoryEventDefOf.AteFungus;
+        }
+
+        public void Strip(bool notifyFaction = true)
+        {
+        }
+
+        public void Notify_BillDeleted(Bill bill)
+        {
+        }
     }
 }

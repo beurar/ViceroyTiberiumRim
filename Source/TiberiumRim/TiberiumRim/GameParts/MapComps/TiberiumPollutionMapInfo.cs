@@ -68,12 +68,12 @@ namespace TiberiumRim
 
         public PollutionTracker PollutionAt(IntVec3 pos)
         {
-            return PollutionTrackers.Find(t => t.Group == pos.GetRoomGroup(map));
+            return PollutionTrackers.Find(t => t.District == pos.GetDistrict(map));
         }
 
         public PollutionTracker TrackerFor(Room room)
         {
-            return PollutionTrackers.Find(t => t.Group == room.Group);
+            return PollutionTrackers.Find(t => t.District == room.Districts[0]);
         }
 
         public void RegisterSource(IPollutionSource source)
@@ -206,11 +206,11 @@ namespace TiberiumRim
         {
             Room room = reg.Room;
             if (room == null) return;
-            RoomGroup group = room.Group;
-            SetCachedInfo(c, new CachedPollutionInfo(group.ID, group.CellCount, Pollution.TrackerFor(room).Pollution));
+            District district = room.Districts[0];
+            SetCachedInfo(c, new CachedPollutionInfo(district.ID, district.CellCount, Pollution.TrackerFor(room).Pollution));
         }
 
-        public bool TryGetAverageRoomPollution(RoomGroup r, out int result)
+        public bool TryGetAverageRoomPollution(District r, out int result)
         {
             CellIndices cellIndices = this.map.cellIndices;
             foreach (var c in r.Cells)
@@ -327,8 +327,8 @@ namespace TiberiumRim
         private List<PollutionTracker> existingTrackers = new List<PollutionTracker>();
         private List<PollutionTracker> newTrackers = new List<PollutionTracker>();
 
-        public List<RoomGroup> reusedRoomGroups = new List<RoomGroup>();
-        public List<RoomGroup> newRoomGroups = new List<RoomGroup>();
+        public List<District> reusedDistricts = new List<District>();
+        public List<District> newDistricts = new List<District>();
 
         public bool updating;
         public PollutionRoomUpdater(TiberiumPollutionMapInfo mapInfo)
@@ -341,26 +341,26 @@ namespace TiberiumRim
             existingTrackers = parentInfo.PollutionTrackers.ListFullCopy();
             parentInfo.PollutionTrackers.Clear();
 
-            reusedRoomGroups.Clear();
-            newRoomGroups.Clear();
+            reusedDistricts.Clear();
+            newDistricts.Clear();
             updating = true;
         }
 
-        public void Notify_UpdateRoomGroups(List<RoomGroup> newRooms, HashSet<RoomGroup> reusedGroup)
+        public void Notify_UpdateRoomGroups(List<District> newDistricts, HashSet<District> reusedDistricts)
         {
-            newRoomGroups = newRooms.ListFullCopy();
-            reusedRoomGroups = reusedGroup.ToList();
+            this.newDistricts = newDistricts.ListFullCopy();
+            this.reusedDistricts = reusedDistricts.ToList();
         }
 
         public void Apply(List<Room> newRooms)
         {
             foreach (var newRoom in newRooms)
             {
-                if(newTrackers.Any(t => t.Group == newRoom.Group)) continue;
-                var tracker = existingTrackers.Find(t => t.Group == newRoom.Group);
+                if(newTrackers.Any(t => t.District == newRoom.Districts[0])) continue;
+                var tracker = existingTrackers.Find(t => t.District == newRoom.Districts[0]);
                 if (tracker != null)
                 {
-                    if (reusedRoomGroups.Contains(tracker.Group))
+                    if (reusedDistricts.Contains(tracker.District))
                     {
                         Log.Message("Updating reused room with existing tracker");
                         tracker.MarkDirty();
@@ -369,26 +369,26 @@ namespace TiberiumRim
                     continue;
                 }
 
-                foreach (var reusedRoom in reusedRoomGroups)
+                foreach (var reusedRoom in reusedDistricts)
                 {
-                    if (newRoom.Group == reusedRoom)
+                    if (newRoom.Districts[0] == reusedRoom)
                     {
-                        var tracker2 = existingTrackers.Find(t => t.Group == reusedRoom);
+                        var tracker2 = existingTrackers.Find(t => t.District == reusedRoom);
                         Log.Message("Updating reused room with existing tracker " + (tracker2 != null));
                         newTrackers.Add(tracker2);
                         break;
                     }
                 }
 
-                foreach (var newGroup in newRoomGroups)
+                foreach (var newGroup in newDistricts)
                 {
-                    if (newRoom.Group == newGroup)
+                    if (newRoom.Districts[0] == newGroup)
                     {
                         var newTracker = new PollutionTracker(newGroup.Map, newGroup, 0);
                         newTracker.MarkDirty();
                         newTrackers.Add(newTracker);
                         //TODO: Check outdoor effect
-                        if(newTracker.Group.UsesOutdoorTemperature) break;
+                        if(newTracker.District.OpenRoofCountStopAt(1) > 0) break;
                         if (parentInfo.pollutionCache.TryGetAverageRoomPollution(newGroup, out int pollution))
                         {
                             newTracker.Pollution = pollution;

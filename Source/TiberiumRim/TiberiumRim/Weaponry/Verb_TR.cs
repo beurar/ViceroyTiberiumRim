@@ -149,7 +149,8 @@ namespace TiberiumRim
                 Pawn pawn = currentTarget.Thing as Pawn;
                 if (pawn != null && pawn.IsColonistPlayerControlled)
                 {
-                    CasterPawn.records.AccumulateStoryEvent(StoryEventDefOf.AttackedPlayer);
+                    //CasterPawn.records.AccumulateStoryEvent(StoryEventDefOf.AttackedPlayer);
+                    Log.Warning("Disabled this, not sure what to fix it with");
                 }
             }
 
