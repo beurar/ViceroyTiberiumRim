@@ -102,10 +102,14 @@ namespace TiberiumRim
                 Material material = head.MatAt(headRot);
                 if (material != null)
                 {
-                    //mirrored = right
-                    Mesh mesh2 = ShouldMirror(headRot, mirrored) ? MeshPool.GridPlaneFlip(new Vector2(1.5f, 1.5f)) : MeshPool.humanlikeHeadSet.MeshAt(headRot);
+                    Vector2 headSize = pawn.Drawer.renderer.HeadGraphic.drawSize;
+                    Mesh mesh2 = ShouldMirror(headRot, mirrored)
+                        ? MeshPool.GridPlaneFlip(headSize)
+                        : MeshPool.GetMeshSetForSize(headSize).MeshAt(headRot);
+
                     GenDraw.DrawMeshNowOrLater(mesh2, a + b, rot, material, portrait);
                 }
+
             }
 
             if (body != null && renderBody)

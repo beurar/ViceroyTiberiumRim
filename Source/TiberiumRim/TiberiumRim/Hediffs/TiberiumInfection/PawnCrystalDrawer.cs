@@ -11,31 +11,47 @@ using  RimWorld;
 
 namespace TiberiumRim
 {
-    public class PawnCrystalDrawer
+    public class PawnCrystalDrawer : PawnRenderNodeWorker
     {
-        protected Pawn pawn;
-        private CrystalOverlay crystal;
+        private CrystalOverlay overlay;
 
-        public PawnCrystalDrawer(Pawn pawn)
+        private Pawn pawn;
+
+        public void Init(Pawn pawn)
         {
             this.pawn = pawn;
         }
 
-        public bool HasImmunity => pawn.health.hediffSet.HasHediff(TRHediffDefOf.TiberiumImmunity);
-        public bool HasTrait => (pawn.story != null && pawn.story.traits.allTraits.Any(t => t.def.defName == "TiberiumTrait"));
-
-        public void RenderOverlay(Pawn pawn, Vector3 drawLoc, Rot4 headRot, Quaternion quat, bool forPortrait)
+        public override void AppendDrawRequests(PawnRenderNode node, PawnDrawParms parms, List<PawnGraphicDrawRequest> requests)
         {
+            var pawnFromNode = node.parent.tree.pawn;
+            var pawn = this.pawn ?? pawnFromNode;
 
-            bool immunity = HasImmunity;
-            bool hasTrait = HasTrait;
-            if (!immunity && !hasTrait)
+            if (pawn == null || pawn.Dead || pawn.Drawer?.renderer == null)
                 return;
 
-            crystal ??= new CrystalOverlay(pawn, immunity);
-            crystal.DrawCrystal(drawLoc, quat, pawn.Rotation, headRot, forPortrait, hasTrait);
+            bool hasImmunity = pawn.health?.hediffSet?.HasHediff(TRHediffDefOf.TiberiumImmunity) ?? false;
+            bool hasTrait = pawn.story?.traits?.HasTrait(TraitDef.Named("TiberiumTrait")) ?? false;
+
+            if (!hasImmunity && !hasTrait)
+                return;
+
+            overlay ??= new CrystalOverlay(pawn, hasImmunity);
+
+            // RimWorld 1.5: Extract render values from matrix
+            Vector3 drawLoc = parms.matrix.MultiplyPoint(Vector3.zero);
+            Quaternion rotation = parms.matrix.rotation;
+            Rot4 rotBody = parms.facing;
+            Rot4 rotHead = pawn.Rotation; // optionally use something smarter if needed
+
+            bool forPortrait = parms.Portrait;
+
+            // Render manually
+            overlay.DrawCrystal(drawLoc, rotation, rotBody, rotHead, forPortrait, hasTrait);
         }
+
     }
+
 
     public class CrystalOverlay
     {
@@ -77,53 +93,57 @@ namespace TiberiumRim
 
         public void DrawCrystal(Vector3 drawLoc, Quaternion bodyQuat, Rot4 bodyRot, Rot4 headRot, bool forPortrait, bool alpha)
         {
-            bool ov = Body != null;
-            PawnGraphicSet graphics = this.pawn.Drawer.renderer.graphics;
+            bool hasOverlay = Body != null;
+
             if (pawn.RaceProps.Humanlike)
             {
-                Vector3 vector = drawLoc;
+                Vector3 bodyDrawLoc = drawLoc;
+
+                // HEAD DRAW
                 if (Head != null)
                 {
-                    Vector3 a = drawLoc;
+                    Vector3 headDrawLoc = drawLoc;
+
                     if (bodyRot != Rot4.North)
                     {
-                        a.y += 0.02734375f;
-                        vector.y += 0.0234375f;
+                        headDrawLoc.y += 0.02734375f;
+                        bodyDrawLoc.y += 0.0234375f;
                     }
                     else
                     {
-                        a.y += 0.0234375f;
-                        vector.y += 0.02734375f;
+                        headDrawLoc.y += 0.0234375f;
+                        bodyDrawLoc.y += 0.02734375f;
                     }
-                    if (graphics.headGraphic != null)
+
+                    Vector3 headOffset = pawn.Drawer.renderer.BaseHeadOffsetAt(headRot);
+                    Material headMat = Head.MatAt(headRot);
+
+                    if (headMat != null)
                     {
-                        Vector3 b = bodyQuat * pawn.Drawer.renderer.BaseHeadOffsetAt(headRot);
-                        Material material = Head.MatAt(headRot);
-                        if (material != null)
-                        {
-                            Mesh mesh2 = MeshPool.humanlikeHeadSet.MeshAt(headRot);
-                            GenDraw.DrawMeshNowOrLater(mesh2, a + b, bodyQuat, material, forPortrait);
-                        }
+                        Mesh headMesh = MeshPool.GetMeshSetForSize(new Vector2(MeshPool.HumanlikeHeadAverageWidth, 1f)).MeshAt(headRot);
+                        GenDraw.DrawMeshNowOrLater(headMesh, headDrawLoc + headOffset, bodyQuat, headMat, forPortrait);
                     }
                 }
-                if (!pawn.apparel.BodyPartGroupIsCovered(BodyPartGroupDefOf.Torso))
+
+                // BODY DRAW
+                bool covered = pawn.apparel != null && pawn.apparel.BodyPartGroupIsCovered(BodyPartGroupDefOf.Torso);
+                if (!covered && Body != null)
                 {
-                    Mesh mesh = null;
-                    if (pawn.RaceProps.Humanlike)
-                        mesh = MeshPool.humanlikeBodySet.MeshAt(bodyRot);
-                    else
-                        mesh = graphics.nakedGraphic.MeshAt(bodyRot);
-                    Material material4 = Body.MatAt(bodyRot, null);
-                    GenDraw.DrawMeshNowOrLater(mesh, vector, bodyQuat, material4, forPortrait);
+                    Material bodyMat = Body.MatAt(bodyRot);
+                    Mesh bodyMesh = MeshPool.GetMeshSetForSize(new Vector2(MeshPool.HumanlikeBodyWidth, 1f)).MeshAt(bodyRot);
+                    GenDraw.DrawMeshNowOrLater(bodyMesh, bodyDrawLoc, bodyQuat, bodyMat, forPortrait);
                 }
             }
             else
             {
-                var mesh = ov ? Body.MeshAt(bodyRot) : MeshPool.plane14;
-                var quat = ov ? bodyQuat : this.quat;
-                var drawMat = ov ? Body.MatAt(bodyRot, pawn) : mat;
+                // NON-HUMANLIKE fallback (animals, mechanoids, etc.)
+                Mesh mesh = hasOverlay ? Body.MeshAt(bodyRot) : MeshPool.plane14;
+                Quaternion quat = hasOverlay ? bodyQuat : this.quat;
+                Material drawMat = hasOverlay ? Body.MatAt(bodyRot, pawn) : mat;
+
                 GenDraw.DrawMeshNowOrLater(mesh, drawLoc, quat, drawMat, forPortrait);
             }
         }
+
     }
 }

@@ -38,26 +38,37 @@ namespace TiberiumRim
             List<IntVec3> cachedList = GenRadial.RadialCellsAround(center, radius, true).InRandomOrder().ToList();
             int i = 0;
             Color color = new ColorInt(15, 15, 55).ToColor;
+
+            ThingDef moteDef = DefDatabase<ThingDef>.GetNamed("Mote_DustPuffThick", errorOnFail: false);
+            if (moteDef == null)
+            {
+                Log.Warning("Mote_DustPuffThick not found. Skipping dust effecter.");
+                return;
+            }
+
             ActionComposition composition = new ActionComposition("Dust Effecter");
             composition.AddPart(delegate (ActionPart part)
             {
                 if (part.CurrentTick % 4 == 0)
                 {
-                    MoteThrown moteThrown = (MoteThrown)ThingMaker.MakeThing(ThingDefOf.Mote_DustPuffThick, null);
+                    MoteThrown moteThrown = ThingMaker.MakeThing(moteDef) as MoteThrown;
+                    if (moteThrown == null)
+                        return;
+
                     moteThrown.Scale = 1.9f * TRUtils.Range(2f, 5f);
-                    moteThrown.rotationRate = (float)Rand.Range(-60, 60);
+                    moteThrown.rotationRate = Rand.Range(-60f, 60f);
                     moteThrown.exactPosition = cachedList[i].ToVector3Shifted();
                     moteThrown.instanceColor = color;
-                    moteThrown.SetVelocity((float)Rand.Range(0, 360), TRUtils.Range(0.6f, 0.75f));
+                    moteThrown.SetVelocity(Rand.Range(0f, 360f), TRUtils.Range(0.6f, 0.75f));
                     GenSpawn.Spawn(moteThrown, cachedList[i], map);
 
-                    i++;
-                    if (i == cachedList.Count) i = 0;
+                    i = (i + 1) % cachedList.Count;
                 }
-
             }, 0, duration);
+
             composition.Init();
         }
+
 
         public static void DoAscensionParticlesInRadius(IntVec3 center, Map map, float radius, float duration, IntRange frequency)
         {

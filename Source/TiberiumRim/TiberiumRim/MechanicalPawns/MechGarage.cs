@@ -45,7 +45,7 @@ namespace TiberiumRim
         public bool TryPullFromGarage(MechanicalPawn mech, out Thing resultingMech, IntVec3 toPos, Map map, ThingPlaceMode placeMode = ThingPlaceMode.Direct)
         {
             resultingMech = null;
-            return Container.Contains(mech) && Container.TryDrop_NewTmp(mech, toPos, map, placeMode, out resultingMech);
+            return Container.Contains(mech) && Container.TryDrop(mech, toPos, map, placeMode, out resultingMech);
         }
 
         public void GetChildHolders(List<IThingHolder> outChildren)

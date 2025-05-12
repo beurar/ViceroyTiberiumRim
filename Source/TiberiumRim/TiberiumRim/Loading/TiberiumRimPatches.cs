@@ -506,7 +506,8 @@ namespace TiberiumRim
                 Vector3 drawLoc = rootLoc;
                 drawLoc.y += 0.01953125f;
                 Quaternion quaternion = Quaternion.AngleAxis(angle, Vector3.up);
-                renderComp.Drawer.RenderOverlay(pawn, drawLoc, headFacing, quaternion, portrait);
+                // This should be working now with internal Rimworld logic - I think.
+                //renderComp.Drawer.RenderOverlay(pawn, drawLoc, headFacing, quaternion, portrait);
             }
         }
 

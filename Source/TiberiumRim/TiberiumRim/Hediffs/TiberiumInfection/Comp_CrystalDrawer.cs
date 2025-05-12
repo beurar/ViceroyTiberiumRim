@@ -17,7 +17,8 @@ namespace TiberiumRim
             {
                 if (drawer == null)
                 {
-                    drawer = new PawnCrystalDrawer(parent as Pawn);
+                    var drawer = new PawnCrystalDrawer();
+                    drawer.Init(parent as Pawn);
                 }
                 return drawer;
             }

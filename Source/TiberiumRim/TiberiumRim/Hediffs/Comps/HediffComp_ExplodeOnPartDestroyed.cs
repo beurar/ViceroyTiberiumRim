@@ -41,7 +41,7 @@ namespace TiberiumRim
             if (isRuptered) return;
             isRuptered = true;
             Pawn.TakeDamage(new DamageInfo(DamageDefOf.Bomb, parent.Part.def.hitPoints, 1));
-            GenExplosion.DoExplosion(base.Pawn.Position, base.Pawn.Map, this.Props.explosionRadius * intensity, this.Props.damageDef, base.Pawn, this.Props.damageAmount / 2, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1, 0f, false, null, null);
+            GenExplosion.DoExplosion(base.Pawn.Position, base.Pawn.Map, this.Props.explosionRadius * intensity, this.Props.damageDef, base.Pawn, this.Props.damageAmount / 2, -1f, null, null, null, null, null, 0f, 1, null, false, null, 0f, 1, 0f, false, null, null);
         }
     }
 

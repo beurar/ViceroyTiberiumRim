@@ -44,12 +44,12 @@ namespace TiberiumRim
                     strikeLoc = CellFinderLoose.RandomCellWith((IntVec3 sq) => sq.Standable(map) && !map.roofGrid.Roofed(sq), map, 1000);
                 boltMesh = LightningBoltMeshPool.RandomBoltMesh;
                 if (strikeLoc.Fogged(map)) return;
-                GenExplosion.DoExplosion(this.strikeLoc, this.map, 1.9f, DamageDefOf.Bomb, null, -1, -1f, null, null, null, null, null, 0f, 1, false, null, 0f, 1, 0f, false);
+                GenExplosion.DoExplosion(this.strikeLoc, this.map, 1.9f, DamageDefOf.Bomb, null, -1, -1f, null, null, null, null, null, 0f, 1, null, false, null, 0f, 1, 0f, false);
                 Vector3 loc = strikeLoc.ToVector3Shifted();
                 for (int i = 0; i < 4; i++)
                 {
-                    MoteMaker.ThrowSmoke(loc, map, 1.5f);
-                    MoteMaker.ThrowMicroSparks(loc, map);
+                    ThrowSmoke(loc, map, 1.5f);
+                    ThrowMicroSparks(loc, map);
                     LightningGlow(loc, map, 1.5f);
                     //MoteMaker.ThrowLightningGlow(loc, this.map, 1.5f);
                 }
@@ -61,17 +61,61 @@ namespace TiberiumRim
             }
         }
 
+        private static void ThrowSmoke(Vector3 loc, Map map, float scale)
+        {
+            var def = DefDatabase<ThingDef>.GetNamed("Mote_Smoke", errorOnFail: false);
+            if (def == null || !loc.ShouldSpawnMotesAt(map) || map.moteCounter.SaturatedLowPriority) return;
+
+            if (ThingMaker.MakeThing(def) is MoteThrown mote)
+            {
+                mote.Scale = scale;
+                mote.rotationRate = Rand.Range(-30f, 30f);
+                mote.exactPosition = loc;
+                mote.SetVelocity(Rand.Range(0f, 360f), Rand.Range(0.6f, 0.75f));
+                GenSpawn.Spawn(mote, loc.ToIntVec3(), map);
+            }
+        }
+
+        private static void ThrowMicroSparks(Vector3 loc, Map map)
+        {
+            var def = DefDatabase<ThingDef>.GetNamed("Mote_MicroSparks", errorOnFail: false);
+            if (def == null || !loc.ShouldSpawnMotesAt(map) || map.moteCounter.SaturatedLowPriority) return;
+
+            if (ThingMaker.MakeThing(def) is MoteThrown mote)
+            {
+                mote.Scale = Rand.Range(0.2f, 0.6f);
+                mote.rotationRate = Rand.Range(-120f, 120f);
+                mote.exactPosition = loc;
+                mote.SetVelocity(Rand.Range(0f, 360f), Rand.Range(1f, 1.5f));
+                GenSpawn.Spawn(mote, loc.ToIntVec3(), map);
+            }
+        }
+
+
+        private static readonly ThingDef Mote_LightningGlow =
+    DefDatabase<ThingDef>.GetNamed("Mote_LightningGlow", errorOnFail: false);
+
         private void LightningGlow(Vector3 loc, Map map, float size)
         {
-            if (!loc.ShouldSpawnMotesAt(map) || map.moteCounter.SaturatedLowPriority) return; 
-            MoteThrown moteThrown = (MoteThrown)ThingMaker.MakeThing(ThingDefOf.Mote_LightningGlow);
-            moteThrown.instanceColor = LightningFlashColors.sky;
-            moteThrown.Scale = Rand.Range(4f, 6f) * size;
-            moteThrown.rotationRate = Rand.Range(-3f, 3f);
-            moteThrown.exactPosition = loc + size * new Vector3(Rand.Value - 0.5f, 0f, Rand.Value - 0.5f);
-            moteThrown.SetVelocity((float)Rand.Range(0, 360), 1.2f);
-            GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map, WipeMode.Vanish);
+            if (Mote_LightningGlow == null)
+            {
+                Log.Warning("Mote_LightningGlow not found. Skipping lightning glow effect.");
+                return;
+            }
+
+            if (!loc.ShouldSpawnMotesAt(map) || map.moteCounter.SaturatedLowPriority) return;
+
+            if (ThingMaker.MakeThing(Mote_LightningGlow) is MoteThrown moteThrown)
+            {
+                moteThrown.instanceColor = LightningFlashColors.sky;
+                moteThrown.Scale = Rand.Range(4f, 6f) * size;
+                moteThrown.rotationRate = Rand.Range(-3f, 3f);
+                moteThrown.exactPosition = loc + size * new Vector3(Rand.Value - 0.5f, 0f, Rand.Value - 0.5f);
+                moteThrown.SetVelocity(Rand.Range(0f, 360f), 1.2f);
+                GenSpawn.Spawn(moteThrown, loc.ToIntVec3(), map, WipeMode.Vanish);
+            }
         }
+
 
         public override void WeatherEventTick()
         {

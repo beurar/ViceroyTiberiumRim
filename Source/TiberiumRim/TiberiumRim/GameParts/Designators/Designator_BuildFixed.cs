@@ -27,32 +27,53 @@ namespace TiberiumRim
 
             if (DebugSettings.godMode || entDef.GetStatValueAbstract(StatDefOf.WorkToBuild, stuffDef).Equals(0f))
             {
-                if (this.entDef is TerrainDef)            
-                    base.Map.terrainGrid.SetTerrain(c, (TerrainDef)this.entDef);         
+                if (entDef is TerrainDef terrainDef)
+                {
+                    base.Map.terrainGrid.SetTerrain(c, terrainDef);
+                }
                 else
                 {
-                    Thing thing = ThingMaker.MakeThing((ThingDef)this.entDef, this.stuffDef);
-                    if(TRThingDef != null)
+                    Thing thing = ThingMaker.MakeThing((ThingDef)entDef, stuffDef);
+                    if (TRThingDef != null)
                         thing.SetFactionDirect(TRThingDef.devObject ? null : Faction.OfPlayer);
-                    GenSpawn.Spawn(thing, c, base.Map, this.placingRot, WipeMode.Vanish, false);
+
+                    GenSpawn.Spawn(thing, c, base.Map, placingRot, WipeMode.Vanish, false);
                 }
             }
             else
             {
-                GenSpawn.WipeExistingThings(c, this.placingRot, this.entDef.blueprintDef, base.Map, DestroyMode.Deconstruct);
-                GenConstruct.PlaceBlueprintForBuild(this.entDef, c, base.Map, this.placingRot, Faction.OfPlayer, this.stuffDef);
+                GenSpawn.WipeExistingThings(c, placingRot, entDef.blueprintDef, base.Map, DestroyMode.Deconstruct);
+                GenConstruct.PlaceBlueprintForBuild(entDef, c, base.Map, placingRot, Faction.OfPlayer, stuffDef);
             }
-            MoteMaker.ThrowMetaPuffs(GenAdj.OccupiedRect(c, this.placingRot, this.entDef.Size), base.Map);
-            if (this.entDef is ThingDef thingDef && thingDef.IsOrbitalTradeBeacon)
+
+            // I think ThrowMetaPuffs is now part of MoteMaker?
+            var rect = GenAdj.OccupiedRect(c, placingRot, entDef.Size);
+            foreach (var cell in rect)
+            {
+                if (!cell.ShouldSpawnMotesAt(base.Map) || base.Map.moteCounter.SaturatedLowPriority) continue;
+
+                var puff = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("Mote_MetaPuff", false)) as MoteThrown;
+                if (puff != null)
+                {
+                    puff.Scale = Rand.Range(1.5f, 2.2f);
+                    puff.rotationRate = Rand.Range(-30f, 30f);
+                    puff.exactPosition = cell.ToVector3Shifted();
+                    puff.SetVelocity(Rand.Range(0f, 360f), Rand.Range(0.3f, 0.5f));
+                    GenSpawn.Spawn(puff, cell, base.Map);
+                }
+            }
+
+            if (entDef is ThingDef thingDef && thingDef.IsOrbitalTradeBeacon)
                 PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.BuildOrbitalTradeBeacon, KnowledgeAmount.Total);
 
             if (TutorSystem.TutorialMode)
                 TutorSystem.Notify_Event(new EventPack(base.TutorTagDesignate, c));
 
-            if (this.entDef.PlaceWorkers == null) return;
-            foreach (var placeWorker in this.entDef.PlaceWorkers)
+            if (entDef.PlaceWorkers == null) return;
+
+            foreach (var placeWorker in entDef.PlaceWorkers)
             {
-                placeWorker.PostPlace(base.Map, this.entDef, c, this.placingRot);
+                placeWorker.PostPlace(base.Map, entDef, c, placingRot);
             }
         }
     }

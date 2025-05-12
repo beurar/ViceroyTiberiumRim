@@ -96,7 +96,7 @@ namespace TiberiumRim
             mech.ageTracker.AgeChronologicalTicks = 0;
             mech.Rotation = Rot4.Random;
             mech.ParentBuilding = this.parent as Building;
-            mech.Drawer.renderer.graphics.ResolveAllGraphics();
+            mech.Drawer?.renderer?.SetAllGraphicsDirty();
             mech.ParentMechLink = this.MainMechLink;
             return mech;
         }
