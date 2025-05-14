@@ -91,6 +91,7 @@ namespace TiberiumRim
 
         public override void Tick()
         {
+            
         }
 
         public override void Draw()

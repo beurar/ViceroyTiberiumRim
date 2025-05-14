@@ -11,3 +11,5 @@ F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Sourc
 F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Source\TiberiumRim\TiberiumRim\obj\Release\TiberiumRim.pdb
 F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Assemblies\TiberiumRim.dll
 F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\Source\ViceroyTiberiumRim\Assemblies\TiberiumRim.pdb
+F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\1.5\Assemblies\TiberiumRim.dll
+F:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Viceroy-TibRim\1.5\Assemblies\TiberiumRim.pdb

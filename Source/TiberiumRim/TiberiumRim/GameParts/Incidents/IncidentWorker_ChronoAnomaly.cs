@@ -30,7 +30,7 @@ namespace TiberiumRim
             {
                 spawnLoc = DropCellFinder.FindRaidDropCenterDistant(map, false);
             }
-
+            
             ActionComposition composition = new ActionComposition("VolkovArrival");
             composition.AddPart(delegate { TRUtils.CameraPanNLock().PanDirect(spawnLoc, 5); }, 0);
             composition.AddPart(delegate
@@ -39,7 +39,7 @@ namespace TiberiumRim
                 Vortex.Add(VolkovGenerator.GenerateVolkov(map));
                 Vortex.PortalSetup(8f.SecondsToTicks(), 7f.SecondsToTicks());
                 GenSpawn.Spawn(Vortex, spawnLoc, map);
-
+            
             }, 5f);
             composition.Init();
             return true;

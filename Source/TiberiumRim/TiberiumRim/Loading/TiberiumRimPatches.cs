@@ -356,21 +356,26 @@ namespace TiberiumRim
             }
         }
 
-        [HarmonyPatch(typeof(JobGiver_Manhunter))]
-        [HarmonyPatch("MeleeAttackJob")]
-        public class JobGiver_Manhunter_MeleeAttackJobPatch
+        [HarmonyPatch(typeof(JobGiver_Manhunter), "TryGiveJob")]
+        public static class JobGiver_Manhunter_TryGiveJob_Patch
         {
-            private static bool Prefix(Pawn pawn, Thing target, ref Job __result)
+            public static bool Prefix(Pawn pawn, ref Job __result, JobGiver_Manhunter __instance)
             {
                 if (!pawn.PawnHasRangedHediffVerb()) return true;
+
+                // mimic what MeleeAttackJob would do here if needed, or make your own job
+                LocalTargetInfo target = pawn.mindState.enemyTarget;
+                if (target == null || !target.IsValid)
+                    return true;
+
                 Job job = JobMaker.MakeJob(JobDefOf.AttackStatic, target);
-                //job.maxNumMeleeAttacks = 1;
                 job.expiryInterval = Rand.Range(420, 900);
-                job.attackDoorIfTargetLost = true; 
+                job.attackDoorIfTargetLost = true;
                 __result = job;
                 return false;
             }
         }
+
 
         [HarmonyPatch(typeof(JobDriver_Wait))]
         [HarmonyPatch("CheckForAutoAttack")]
@@ -476,17 +481,26 @@ namespace TiberiumRim
             }
         }
 
-        [HarmonyPatch(typeof(PawnRenderer), "RenderPawnInternal")]
-        [HarmonyPatch(new Type[] { typeof(Vector3), typeof(float), typeof(bool), typeof(Rot4), typeof(Rot4), typeof(RotDrawMode), typeof(bool), typeof(bool), typeof(bool) })]
-        public static class PawnRenderPatch
+        [HarmonyPatch(typeof(PawnRenderer), nameof(PawnRenderer.RenderCache))]
+        public static class PawnRenderer_RenderCache_Patch
         {
             [HarmonyPostfix]
-            public static void Fix(PawnRenderer __instance, Vector3 rootLoc, float angle, bool renderBody, Rot4 bodyFacing, Rot4 headFacing, RotDrawMode bodyDrawType, bool portrait, bool headStump, bool invisible)
+            public static void Postfix(
+                PawnRenderer __instance,
+                Rot4 rotation,
+                float angle,
+                Vector3 positionOffset,
+                bool renderHead,
+                bool portrait,
+                bool renderHeadgear,
+                bool renderClothes)
             {
-                if (!renderBody || invisible || bodyDrawType == RotDrawMode.Dessicated)
+                // Safely get the Pawn
+                Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
+                if (pawn == null || !pawn.Spawned)
                     return;
 
-                Pawn pawn = Traverse.Create(__instance).Field("pawn").GetValue<Pawn>();
+                // Apply your rendering logic
                 var renderComp = pawn.GetComp<Comp_CrystalDrawer>();
                 var drawerComp = pawn.GetComp<Comp_PawnExtraDrawer>();
                 if (drawerComp == null)
@@ -494,8 +508,10 @@ namespace TiberiumRim
                     Log.ErrorOnce("Comp_PawnExtraDrawer not applied!", 2803974);
                     return;
                 }
-                Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.up);
-                drawerComp.DrawExtraLayers(pawn, rootLoc, rotation, renderBody, bodyFacing, headFacing, portrait, headStump);
+
+                Quaternion rotationQuat = Quaternion.AngleAxis(angle, Vector3.up);
+                Vector3 drawLoc = positionOffset; // This is the equivalent of rootLoc
+                drawerComp.DrawExtraLayers(pawn, drawLoc, rotationQuat, true, rotation, rotation, portrait, false);
 
                 if (renderComp == null)
                 {
@@ -503,13 +519,12 @@ namespace TiberiumRim
                     return;
                 }
 
-                Vector3 drawLoc = rootLoc;
-                drawLoc.y += 0.01953125f;
-                Quaternion quaternion = Quaternion.AngleAxis(angle, Vector3.up);
-                // This should be working now with internal Rimworld logic - I think.
-                //renderComp.Drawer.RenderOverlay(pawn, drawLoc, headFacing, quaternion, portrait);
+                drawLoc.y += 0.01953125f; // Lift it slightly above the body
+                                          // Uncomment if your overlay renderer is set up
+                                          //renderComp.Drawer.RenderOverlay(pawn, drawLoc, rotation, rotationQuat, portrait);
             }
         }
+
 
         [HarmonyPatch(typeof(ThingWithComps))]
         [HarmonyPatch("Print")]
@@ -534,17 +549,39 @@ namespace TiberiumRim
             }
         }
 
-        [HarmonyPatch(typeof(GhostDrawer))]
-        [HarmonyPatch("DrawGhostThing_NewTmp")]
+        [HarmonyPatch(typeof(GhostDrawer), nameof(GhostDrawer.DrawGhostThing))]
+        [HarmonyPatch(new Type[]
+        {
+            typeof(IntVec3),
+            typeof(Rot4),
+            typeof(ThingDef),
+            typeof(Graphic),
+            typeof(Color),
+            typeof(AltitudeLayer),
+            typeof(Thing),
+            typeof(bool),
+            typeof(ThingDef)
+        })]
         public static class DrawGhostThingPatch
         {
-            public static bool Prefix(IntVec3 center, Rot4 rot, ThingDef thingDef, Graphic baseGraphic, Color ghostCol, AltitudeLayer drawAltitude)
+            public static bool Prefix(
+                IntVec3 center,
+                Rot4 rot,
+                ThingDef thingDef,
+                Graphic baseGraphic,
+                Color ghostCol,
+                AltitudeLayer drawAltitude,
+                Thing thing,
+                bool drawPlaceWorkers,
+                ThingDef stuff)
             {
                 if (!(thingDef is FXThingDef fxDef)) return true;
+
                 if (baseGraphic == null)
                 {
                     baseGraphic = thingDef.graphic;
                 }
+
                 Graphic graphic = GhostUtility.GhostGraphicFor(baseGraphic, thingDef, ghostCol);
                 Vector3 loc = GenThing.TrueCenter(center, rot, thingDef.Size, drawAltitude.AltitudeFor());
                 TRUtils.Draw(graphic, loc, rot, null, fxDef);
@@ -553,13 +590,15 @@ namespace TiberiumRim
                 {
                     t.DrawGhost(center, rot, thingDef, ghostCol, drawAltitude);
                 }
-                if (thingDef.PlaceWorkers != null)
+
+                if (drawPlaceWorkers && thingDef.PlaceWorkers != null)
                 {
                     foreach (var p in thingDef.PlaceWorkers)
                     {
                         p.DrawGhost(thingDef, center, rot, ghostCol);
                     }
                 }
+
                 return false;
             }
         }
@@ -706,19 +745,21 @@ namespace TiberiumRim
             }
         }
 
-        [HarmonyPatch(typeof(PawnRenderer))]
-        [HarmonyPatch("DrawEquipmentAiming")]
-        public static class DrawEquipmentAimingPatch
-        {
-            public static bool Prefix(Thing eq, Vector3 drawLoc, float aimAngle)
-            {
-                if (eq is FXThing thing)
-                {
-                    return true;
-                }
-                return true;
-            }
-        }
+        // Doesnt do anything?
+        //[HarmonyPatch(typeof(PawnRenderer))]
+        //[HarmonyPatch("DrawEquipmentAiming")]
+        //public static class DrawEquipmentAimingPatch
+        //{
+        //    
+        //    public static bool Prefix(Thing eq, Vector3 drawLoc, float aimAngle)
+        //    {
+        //        if (eq is FXThing thing)
+        //        {
+        //            return true;
+        //        }
+        //        return true;
+        //    }
+        //}
 
         [HarmonyPatch(typeof(Thing))]
         [HarmonyPatch("Kill")]
@@ -1007,12 +1048,26 @@ namespace TiberiumRim
         }
 
         [HarmonyPatch(typeof(SteadyEnvironmentEffects))]
-        [HarmonyPatch("FinalDeteriorationRate", new Type[]{ typeof(Thing), typeof(bool), typeof(bool), typeof(bool), typeof(TerrainDef), typeof(List<string>) })]
+        [HarmonyPatch(nameof(SteadyEnvironmentEffects.FinalDeteriorationRate))]
+        [HarmonyPatch(new Type[] {
+            typeof(Thing),
+            typeof(bool),
+            typeof(bool),
+            typeof(TerrainDef),
+            typeof(List<string>)
+        })]
         public static class FinalDeteriorationRatePatch
         {
-            public static void Postfix(Thing t, bool roofed, bool roomUsesOutdoorTemperature, bool protectedByEdifice, TerrainDef terrain, ref float __result, List<string> reasons)
+            public static void Postfix(
+                Thing t,
+                bool roofed,
+                bool roomUsesOutdoorTemperature,
+                TerrainDef terrain,
+                ref float __result,
+                List<string> reasons)
             {
                 if (!t.Spawned) return;
+
                 if (t.def.CanEverDeteriorate && t.Position.GetTiberium(t.Map) != null)
                 {
                     reasons?.Add("TR_Deterioration".Translate());
@@ -1020,6 +1075,7 @@ namespace TiberiumRim
                 }
             }
         }
+
 
         [HarmonyPatch(typeof(DynamicDrawManager))]
         [HarmonyPatch("DrawDynamicThings")]
@@ -1300,44 +1356,33 @@ namespace TiberiumRim
         }
     }
 
-    [HarmonyPatch(typeof(District))]
-    [HarmonyPatch("RemoveDistrict")]
-    public static class AddRoomPatch
-    {
-        public static void Postfix(District __instance, Room room)
-        {
-            //room.Map.Tiberium().PollutionInfo.Notify_RoomGroupLostRoom(__instance, room.Group);
-        }
-    }
+    // Disabled this - Not sure what it is for but it errors
+    //[HarmonyPatch(typeof(District))]
+    //[HarmonyPatch("RemoveDistrict")]
+    //public static class AddRoomPatch
+    //{
+    //    public static void Postfix(District __instance, Room room)
+    //    {
+    //        //room.Map.Tiberium().PollutionInfo.Notify_RoomGroupLostRoom(__instance, room.Group);
+    //    }
+    //}
 
     [HarmonyPatch(typeof(RegionAndRoomUpdater))]
-    [HarmonyPatch("NotifyAffectedRoomsAndRoomGroupsAndUpdateTemperature")]
-    public static class NotifyAffectedRoomsAndRoomGroupsAndUpdateTemperaturePatch
+    [HarmonyPatch("RebuildAllRegionsAndRooms")]
+    public static class RebuildAllRegionsAndRooms
     {
         public static bool Prefix(Map ___map, List<District> ___newDistricts, HashSet<District> ___reusedOldDistricts)
         {
             var pollutionInfo = ___map.Tiberium().PollutionInfo;
+            ___map.Tiberium().PollutionInfo.updater.Notify_UpdateStart();
             pollutionInfo.updater.Notify_UpdateRoomGroups(___newDistricts, ___reusedOldDistricts);
             return true;
         }
-    }
 
-    [HarmonyPatch(typeof(RegionAndRoomUpdater))]
-    [HarmonyPatch("CreateOrUpdateRooms")]
-    public static class CreateOrUpdateRoomsPatch
-    {
-        public static bool Prefix(RegionAndRoomUpdater __instance, Map ___map)
-        {
-            ___map.Tiberium().PollutionInfo.updater.Notify_UpdateStart();
-            return true;
-        }
-
-        
         public static void Postfix(Map ___map)
         {
             ___map.Tiberium().PollutionInfo.updater.Apply(___map.regionGrid.allRooms);
         }
-
     }
 
     [HarmonyPatch(typeof(TemperatureCache))]

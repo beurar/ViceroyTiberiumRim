@@ -328,6 +328,7 @@ namespace TiberiumRim
         {
             this.compClass = typeof(CompFX);
         }
+
         public bool useParentClass = false;
         public IntRange tickOffset = new IntRange(0, 333);
         public FXMode mode = FXMode.Static;

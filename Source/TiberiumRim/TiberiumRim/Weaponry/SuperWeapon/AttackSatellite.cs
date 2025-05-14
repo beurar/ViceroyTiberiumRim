@@ -65,13 +65,14 @@ namespace TiberiumRim
             {
                 int i = Tile;
                 Ray ray = new Ray(Vector3.zero, DrawPos);
-                
+                 
                 int worldLayerMask = WorldCameraManager.WorldLayerMask;
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, 1500f, worldLayerMask))
-                {
-                    i = Find.World.renderer.GetTileIDFromRayHit(hit);
-                }
+                //This is no longer in the assembly
+                //RaycastHit hit;
+                //if (Physics.Raycast(ray, out hit, 1500f, worldLayerMask))
+                //{
+                //    i = Find.World.renderer.GetTileIDFromRayHit(hit);
+                //}
                 return Find.WorldGrid[i];
             }
         }
