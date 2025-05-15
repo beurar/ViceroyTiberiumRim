@@ -56,36 +56,37 @@ namespace TiberiumRim
             }
         }
 
-        [HarmonyPatch(typeof(GenConstruct)), HarmonyPatch("CanPlaceBlueprintOver")]
-        public static class TestPatch
-        {
-            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                MethodInfo helper = AccessTools.Method(typeof(TestPatch), nameof(GibHelp));
-
-                bool patched = false;
-                int i = 0;
-                foreach (var code in instructions)
-                {
-                    if (code.opcode == OpCodes.Ret)
-                    {
-                        yield return new CodeInstruction(OpCodes.Ldc_I4, i);
-                        yield return new CodeInstruction(OpCodes.Call, helper);
-
-                        i++;
-                    }
-                    yield return code;
-                }
-
-            }
-
-            public static int GibHelp(int retval , int count)
-            {
-                Log.Message("Returning " + (retval != 0) + " at " + count);
-                return retval;
-            }
-
-        }
+        //Not sure we need this?
+        //[HarmonyPatch(typeof(GenConstruct)), HarmonyPatch("CanPlaceBlueprintOver")]
+        //public static class TestPatch
+        //{
+        //    public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        //    {
+        //        MethodInfo helper = AccessTools.Method(typeof(TestPatch), nameof(GibHelp));
+        //
+        //        bool patched = false;
+        //        int i = 0;
+        //        foreach (var code in instructions)
+        //        {
+        //            if (code.opcode == OpCodes.Ret)
+        //            {
+        //                yield return new CodeInstruction(OpCodes.Ldc_I4, i);
+        //                yield return new CodeInstruction(OpCodes.Call, helper);
+        //
+        //                i++;
+        //            }
+        //            yield return code;
+        //        }
+        //
+        //    }
+        //
+        //    public static int GibHelp(int retval , int count)
+        //    {
+        //        Log.Message("Returning " + (retval != 0) + " at " + count);
+        //        return retval;
+        //    }
+        //
+        //}
 
         //First Startup
         [HarmonyPatch(typeof(MainMenuDrawer)), HarmonyPatch("MainMenuOnGUI"), StaticConstructorOnStartup]
