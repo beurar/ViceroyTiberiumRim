@@ -206,7 +206,8 @@ namespace TiberiumRim
         {
             Room room = reg.Room;
             if (room == null) return;
-            District district = room.Districts[0];
+            District district = reg.District;
+            if (district == null) return;
             SetCachedInfo(c, new CachedPollutionInfo(district.ID, district.CellCount, Pollution.TrackerFor(room).Pollution));
         }
 

@@ -589,15 +589,15 @@ namespace TiberiumRim
         public static ThingDef MakeNewBluePrint(ThingDef def, bool isInstallBlueprint, ThingDef normalBlueprint = null)
         {
             Type type = typeof(ThingDefGenerator_Buildings);
-            var NewBlueprint = type.GetMethod("NewBlueprintDef_Thing", BindingFlags.NonPublic | BindingFlags.Static);
-            return (ThingDef)NewBlueprint.Invoke(null, new object[] { def, isInstallBlueprint, normalBlueprint });
+            var NewBlueprintMethod = type.GetMethod("NewBlueprintDef_Thing", BindingFlags.NonPublic | BindingFlags.Static);
+            return (ThingDef)NewBlueprintMethod.Invoke(null, new object[] { def, isInstallBlueprint, normalBlueprint, false });
         }
 
         public static ThingDef MakeNewFrame(ThingDef def)
         {
             Type type = typeof(ThingDefGenerator_Buildings);
             var NewFrame = type.GetMethod("NewFrameDef_Thing", BindingFlags.NonPublic | BindingFlags.Static);
-            return (ThingDef)NewFrame.Invoke(null, new object[] { def });
+            return (ThingDef)NewFrame.Invoke(null, new object[] { def, false });
         }
 
         public static Rot4 FromAngleFlat2(float angle)

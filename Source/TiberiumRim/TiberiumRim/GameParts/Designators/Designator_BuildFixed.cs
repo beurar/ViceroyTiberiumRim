@@ -46,22 +46,7 @@ namespace TiberiumRim
                 GenConstruct.PlaceBlueprintForBuild(entDef, c, base.Map, placingRot, Faction.OfPlayer, stuffDef);
             }
 
-            // I think ThrowMetaPuffs is now part of MoteMaker?
-            var rect = GenAdj.OccupiedRect(c, placingRot, entDef.Size);
-            foreach (var cell in rect)
-            {
-                if (!cell.ShouldSpawnMotesAt(base.Map) || base.Map.moteCounter.SaturatedLowPriority) continue;
-
-                var puff = ThingMaker.MakeThing(DefDatabase<ThingDef>.GetNamed("Mote_MetaPuff", false)) as MoteThrown;
-                if (puff != null)
-                {
-                    puff.Scale = Rand.Range(1.5f, 2.2f);
-                    puff.rotationRate = Rand.Range(-30f, 30f);
-                    puff.exactPosition = cell.ToVector3Shifted();
-                    puff.SetVelocity(Rand.Range(0f, 360f), Rand.Range(0.3f, 0.5f));
-                    GenSpawn.Spawn(puff, cell, base.Map);
-                }
-            }
+            FleckMaker.ThrowMetaPuffs(GenAdj.OccupiedRect(c, placingRot, entDef.Size), base.Map);
 
             if (entDef is ThingDef thingDef && thingDef.IsOrbitalTradeBeacon)
                 PlayerKnowledgeDatabase.KnowledgeDemonstrated(ConceptDefOf.BuildOrbitalTradeBeacon, KnowledgeAmount.Total);

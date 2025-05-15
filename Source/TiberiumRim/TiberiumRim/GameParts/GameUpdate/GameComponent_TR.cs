@@ -9,6 +9,7 @@ namespace TiberiumRim
 {
     public class GameComponent_TR : GameComponent
     {
+        public StaticConstructorOnStartup StaticConstructorOnStartup { get; private set; }
         private static GameObject RootHolder;
         public TiberiumRoot MainRoot;
 

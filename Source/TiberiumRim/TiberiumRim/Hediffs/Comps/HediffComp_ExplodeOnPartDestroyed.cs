@@ -13,7 +13,6 @@ namespace TiberiumRim
         public HediffCompProperties_ExplodeOnPartDestroyed Props => (HediffCompProperties_ExplodeOnPartDestroyed) base.props;
 
         public override string CompLabelInBracketsExtra => isRuptered ? "TR_PartRuptured".Translate() : null;
-
         private bool isRuptered;
 
         public override void CompExposeData()

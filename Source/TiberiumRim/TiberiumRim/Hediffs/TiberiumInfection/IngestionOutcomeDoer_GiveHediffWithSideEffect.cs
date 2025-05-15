@@ -12,8 +12,7 @@ namespace TiberiumRim
     {
         public new HediffDef hediffDef;
         public new ChemicalDef toleranceChemical;
-        public new float severity = -1f;
-
+        public new float severity = -1f;        
         public List<NeedDef> needs = new List<NeedDef>();
         public List<HediffDef> hediffs = new List<HediffDef>();
         public List<HediffDef> sideEffects = new List<HediffDef>();

@@ -39,7 +39,6 @@ namespace TiberiumRim
         public DamageDef damageDef;
         public int damageBase = 100;
         public int damageTicks = 10;
-        
         //Graphical
         public string beamPath;
         //public FloatRange scratchRange = new FloatRange(3, 4);

@@ -12,7 +12,6 @@ namespace TiberiumRim
     {
         public TiberiumValueType valueType = TiberiumValueType.None;
         public float cost;
-
         public TiberiumTypeCost()
         {
         }

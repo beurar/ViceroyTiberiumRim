@@ -65,31 +65,6 @@ namespace TiberiumRim
                 def.comps.Add(new CompProperties_PawnExtraDrawer());
                 def.comps.Add(new CompProperties_CrystalDrawer());
             }
-        }
-
-        [HarmonyPatch(typeof(DefGenerator))]
-        [HarmonyPatch("GenerateImpliedDefs_PreResolve")]
-        public static class GenerateImpliedDefs_PreResolvePatch
-        {
-            public static void Postfix()
-            {
-                foreach (TRThingDef def in DefDatabase<TRThingDef>.AllDefs)
-                {
-                    if (def.drawerType == DrawerType.MapMeshOnly && def.comps.Any(c => c is CompProperties_FX fx && fx.overlays.Any(o => o.mode != FXMode.Static)))
-                        Log.Warning(def + " has dynamic overlays but is MapMeshOnly");
-                    if (def.factionDesignation == null) continue;
-                    TRThingDefList.Add(def);
-                    ThingDef blueprint = TRUtils.MakeNewBluePrint(def, false, null);
-                    ThingDef frame = TRUtils.MakeNewFrame(def);
-                    DefGenerator.AddImpliedDef(blueprint);
-                    DefGenerator.AddImpliedDef(frame);
-                    if (def.Minifiable)
-                    {
-                        def.minifiedDef = TRUtils.MakeNewBluePrint(def, true, blueprint);
-                    }
-                    DirectXmlCrossRefLoader.ResolveAllWantedCrossReferences(FailMode.Silent);
-                }
-            }
-        }
+        }        
     }
 }

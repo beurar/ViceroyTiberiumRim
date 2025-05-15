@@ -59,6 +59,7 @@ namespace TiberiumRim
         public static readonly Texture2D OpenMenu = ContentFinder<Texture2D>.Get("UI/Icons/OpenMenu", true);
         public static readonly Texture2D Construct = ContentFinder<Texture2D>.Get("UI/Icons/Construct", true);
         public static readonly Texture2D SelectThing = ContentFinder<Texture2D>.Get("UI/Icons/SelectThing", true);
+        
         //UI - Icons
         //--Controls
         //----Harvester
@@ -102,16 +103,16 @@ namespace TiberiumRim
         public static readonly Texture2D RedTiberium = ContentFinder<Texture2D>.Get("Tiberium/Red/Tiberium_Red2");
 
         //--World
-        public static readonly Material Infested_1 = MaterialPool.MatFrom("World/Tile/Tib_1", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material Infested_2 = MaterialPool.MatFrom("World/Tile/Tib_2", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material Infested_3 = MaterialPool.MatFrom("World/Tile/Tib_3", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material Infested_4 = MaterialPool.MatFrom("World/Tile/Tib_4", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material Infested_1 = MaterialPool.MatFrom("World/Tile/Tib1", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material Infested_2 = MaterialPool.MatFrom("World/Tile/Tib2", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material Infested_3 = MaterialPool.MatFrom("World/Tile/Tib3", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material Infested_4 = MaterialPool.MatFrom("World/Tile/Tib4", ShaderDatabase.WorldOverlayTransparentLit, 3505);
 
-        public static readonly Material TibTile_1 = MaterialPool.MatFrom("World/Old/Tib_1", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material TibTile_2 = MaterialPool.MatFrom("World/Old/Tib_2", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material TibTile_3 = MaterialPool.MatFrom("World/Old/Tib_3", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material TibTile_4 = MaterialPool.MatFrom("World/Old/Tib_4", ShaderDatabase.WorldOverlayTransparentLit, 3505);
-        public static readonly Material TibTile_Glacier = MaterialPool.MatFrom("World/Old/Tib_4", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material TibTile_1 = MaterialPool.MatFrom("World/Tile/Tib5", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material TibTile_2 = MaterialPool.MatFrom("World/Tile/Tib6", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material TibTile_3 = MaterialPool.MatFrom("World/Tile/Tib7", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material TibTile_4 = MaterialPool.MatFrom("World/Tile/Tib8", ShaderDatabase.WorldOverlayTransparentLit, 3505);
+        public static readonly Material TibTile_Glacier = MaterialPool.MatFrom("World/Tile/TiberiumGlacier", ShaderDatabase.WorldOverlayTransparentLit, 3505);
 
         //--Research
         public static readonly Texture2D Research_Active = ContentFinder<Texture2D>.Get("UI/Icons/Research/Active");
@@ -134,7 +135,7 @@ namespace TiberiumRim
         public static readonly Material NodNukeTargeter = MaterialPool.MatFrom("UI/Targeters/Target_Nuke", ShaderDatabase.Transparent);
         public static readonly Material ScrinLandingTargeter = MaterialPool.MatFrom("UI/Targeters/Target_IonCannon", ShaderDatabase.Transparent);
 
-        public static readonly Material IonLightningMat = MaterialPool.MatFrom("Motes/LightningBoltIon", ShaderDatabase.MoteGlow);
+        public static readonly Material IonLightningMat = MaterialPool.MatFrom("VisualFX/LightningBoltIon", ShaderDatabase.MoteGlow);
 
         public static readonly Material ForcedTargetLineMat = MaterialPool.MatFrom(GenDraw.LineTexPath, ShaderDatabase.Transparent, new Color(1f, 0.5f, 0.5f));
 
