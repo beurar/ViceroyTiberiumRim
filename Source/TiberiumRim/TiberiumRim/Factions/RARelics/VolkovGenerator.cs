@@ -8,6 +8,7 @@ using Verse;
 
 namespace TiberiumRim
 {
+    /*
     public static class VolkovGenerator
     {
         private static Pawn Volkov;
@@ -115,4 +116,5 @@ namespace TiberiumRim
             return PawnGenerator.GeneratePawn(request);
         }
     }
+    */
 }

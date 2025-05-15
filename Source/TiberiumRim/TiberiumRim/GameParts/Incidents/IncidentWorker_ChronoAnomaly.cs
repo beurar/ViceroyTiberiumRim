@@ -36,7 +36,7 @@ namespace TiberiumRim
             composition.AddPart(delegate
             {
                 ChronoVortex Vortex = (ChronoVortex) ThingMaker.MakeThing(RedAlertDefOf.ChronoVortexPortal);
-                Vortex.Add(VolkovGenerator.GenerateVolkov(map));
+                //Vortex.Add(VolkovGenerator.GenerateVolkov(map));
                 Vortex.PortalSetup(8f.SecondsToTicks(), 7f.SecondsToTicks());
                 GenSpawn.Spawn(Vortex, spawnLoc, map);
             
