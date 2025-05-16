@@ -290,9 +290,21 @@ namespace TiberiumRim
             return IParent.Actions[index];
         }
 
-        public Vector2 TextureOffset => (bool)IParent?.TextureOffset.HasValue ? IParent.TextureOffset.Value : Vector2.zero;
+        public Vector2 TextureOffset
+        {
+            get
+            {
+                if (IParent?.TextureOffset != null)
+                    return IParent.TextureOffset.Value;
 
-        public  Vector2 TextureScale => (bool)IParent?.TextureScale.HasValue ? IParent.TextureScale.Value : new Vector2(1, 1);
+                return Vector2.zero;
+            }
+        }
+
+        public Vector2 TextureScale =>
+        IParent != null && IParent.TextureScale.HasValue
+        ? IParent.TextureScale.Value
+        : new Vector2(1, 1);
 
         public bool ShouldDoEffecters => IParent == null || IParent.ShouldDoEffecters;
 
