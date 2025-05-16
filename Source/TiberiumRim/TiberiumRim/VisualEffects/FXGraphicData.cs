@@ -5,12 +5,15 @@ using System.Text;
 using UnityEngine;
 using Verse;
 using RimWorld;
+using System.Xml;
 
 namespace TiberiumRim
 {
     public class FXGraphicData
     {
         public GraphicData data;
+        public TextureParamSet textureParams;
+
         public PulseProperties pulse = new PulseProperties();
         public float? directAltitudeOffset = null;
         public float extraAltitude = 0;
@@ -30,5 +33,24 @@ namespace TiberiumRim
 
         //private Graphic graphicInt;
         public Graphic Graphic => data.Graphic; //GraphicDatabase.Get(data.graphicClass, data.texPath, data.shaderType.Shader, data.drawSize, data.color, data.colorTwo);
+
+        public class TextureParamSet
+        {
+            public Dictionary<string, string> entries = new Dictionary<string, string>();
+
+            public void LoadDataFromXmlCustom(XmlNode xmlRoot)
+            {
+                foreach (XmlNode node in xmlRoot.ChildNodes)
+                {
+                    if (node.NodeType == XmlNodeType.Element)
+                    {
+                        string key = node.Name;
+                        string value = node.InnerText;
+                        entries[key] = value;
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -109,6 +109,7 @@ namespace TiberiumRim
             drawInfo = new GraphicDrawInfo(Graphic, drawPos, rot, ((FXThingDef)parent.parent.def).extraData, parent.parent.def);
             var newDrawPos = drawInfo.drawPos + data.drawOffset;
             drawMat = drawInfo.drawMat;
+            ApplyTextureParams(drawMat, data);
 
             drawColor = data.data.color;
             drawColor.a = parent.OpacityFloat(index);
@@ -157,6 +158,22 @@ namespace TiberiumRim
             var info = new GraphicDrawInfo(Graphic, drawPos, rot, ((FXThingDef)parent.def).extraData, parent.def);
             var newDrawPos = info.drawPos + data.drawOffset;
             Printer_Plane.PrintPlane(layer, new Vector3(newDrawPos.x, altitude, newDrawPos.z), info.drawSize, info.drawMat, rotation ?? info.rotation, info.flipUV);
+        }
+
+        private static void ApplyTextureParams(Material mat, FXGraphicData fxData)
+        {
+            if (mat == null || fxData?.textureParams == null)
+                return;
+
+            if (fxData?.textureParams?.entries != null)
+            {
+                foreach (var kv in fxData.textureParams.entries)
+                {
+                    var tex = ContentFinder<Texture2D>.Get(kv.Value, false);
+                    if (tex != null)
+                        mat.SetTexture(kv.Key, tex);
+                }
+            }
         }
     }
 }
