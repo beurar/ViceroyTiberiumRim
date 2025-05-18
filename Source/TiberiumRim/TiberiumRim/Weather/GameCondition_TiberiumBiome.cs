@@ -37,6 +37,6 @@ namespace TiberiumRim
 
         private MapComponent_Tiberium Tiberium => tiberium ?? (tiberium = this.SingleMap.GetComponent<MapComponent_Tiberium>());
 
-        private Color SkyColor => Color.Lerp(Color.white, skyColor, tiberium.TiberiumInfo.Coverage);
+        private Color SkyColor => Color.Lerp(Color.white, skyColor, tiberium.Info.Coverage);
     }
 }

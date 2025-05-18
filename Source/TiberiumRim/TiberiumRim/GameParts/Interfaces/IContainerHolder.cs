@@ -7,7 +7,7 @@ namespace TiberiumRim
 {
     public interface IContainerHolder
     {
-        TiberiumContainer Container { get; }
+        Comp_TiberiumContainer ContainerComp { get; }
         void Notify_ContainerFull();
     }
 }

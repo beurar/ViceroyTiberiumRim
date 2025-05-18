@@ -20,7 +20,7 @@ namespace TiberiumRim
         private int maxOffsetCount = 1;
 
         public TurretGun castingGun;
-        public CompTNW_Turret TiberiumComp => caster.TryGetComp<CompTNW_Turret>();
+        public Comp_Turret TiberiumComp => caster.TryGetComp<Comp_Turret>();
         public VerbProperties_TR Props => (VerbProperties_TR)verbProps;
 
         private int OffsetIndex => castingGun?.ShotIndex ?? offsetIndex;

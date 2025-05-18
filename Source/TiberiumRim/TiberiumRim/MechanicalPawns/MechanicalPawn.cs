@@ -50,8 +50,6 @@ namespace TiberiumRim
             set => parent = value;
         }
 
-        public MapComponent_TNWManager TNWManager => Map.GetComponent<MapComponent_TNWManager>();
-
         public MapComponent_Tiberium TiberiumManager => Map.GetComponent<MapComponent_Tiberium>();
 
         public bool IsDamaged()

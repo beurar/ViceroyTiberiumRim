@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Verse;
 using RimWorld;
+using TeleCore;
 
 namespace TiberiumRim
 {
@@ -22,7 +23,7 @@ namespace TiberiumRim
                 base.DrawLayer();
                 return;
             }
-            if (Find.DesignatorManager.SelectedDesignator is Designator_Build designator && ((designator.PlacingDef as ThingDef)?.comps.Any(c => c is CompProperties_TNW) ?? false))
+            if (Find.DesignatorManager.SelectedDesignator is Designator_Build designator && ((designator.PlacingDef as ThingDef)?.comps.Any(c => c is CompProperties_Network) ?? false))
             {
                 base.DrawLayer();
                 return;
@@ -36,8 +37,8 @@ namespace TiberiumRim
 
         protected override void TakePrintFrom(Thing t)
         {
-            var comp = t.TryGetComp<CompTNW>();
-            comp?.PrintForGrid(this);
+            var comp = t.TryGetComp<CompNetwork>();
+            comp?.CompPrintForPowerGrid(this);
         }
     }
 }

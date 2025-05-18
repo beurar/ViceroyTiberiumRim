@@ -10,15 +10,15 @@ namespace TiberiumRim
 {
     public class PortableContainer : FXThing
     {
-        public TiberiumContainer Container;
+        public Comp_TiberiumContainer Container;
 
-        public void PostSetup(TiberiumContainer container)
+        public void PostSetup(Comp_TiberiumContainer container)
         {
             Container = container.MakeCopy(this);
         }
 
         public override float[] OpacityFloats => new float[1] { Container?.StoredPercent ?? 0f };
-        public override Color[] ColorOverrides => new Color[1] { Container?.Color ?? Color.white };
+        public override Color[] ColorOverrides => new Color[1] { Container?.DominantColor ?? Color.white };
         public override bool[] DrawBools => new bool[1] { true };
 
         public override void ExposeData()
@@ -41,7 +41,7 @@ namespace TiberiumRim
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat(base.GetInspectString());
-            sb.AppendLine("TR_PortableContainer".Translate() + ": " + Container.TotalStorage + "/" + Container.capacity);
+            sb.AppendLine("TR_PortableContainer".Translate() + ": " + Container.StoredPercent);
             return sb.ToString().TrimEndNewlines();
         }
 

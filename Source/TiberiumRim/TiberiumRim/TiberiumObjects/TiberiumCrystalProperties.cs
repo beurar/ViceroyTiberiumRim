@@ -2,21 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TeleCore;
 using Verse;
 
 namespace TiberiumRim
 {
     public class TiberiumCrystalProperties
     {
-        //These are the main properties for Tiberium Crystals
-        public TiberiumValueType type = TiberiumValueType.None;
+        public NetworkValueDef networkValue;
         public TiberiumConsistence consistence = TiberiumConsistence.Plantlike;
         public IntRange deteriorationDamage = new IntRange(0, 0);
         public float plantMutationChance = 0.5f;
         public float rootNodeChance = 0.06f;
         public float minTemperature = -30f;
         public float harvestValue = 0f;
-
 
         public float spreadRadius = 1f;
         public float reproduceDays = 1f;
@@ -30,6 +29,4 @@ namespace TiberiumRim
         public FloatRange sizeRange = new FloatRange(1f, 1f);
         public int MeshCount = 1;
     }
-
-
 }

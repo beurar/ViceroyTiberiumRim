@@ -40,7 +40,7 @@ namespace TiberiumRim
             base.PostDeSpawn(map);
             if (IsRadiating)
             {
-                map.Tiberium().TiberiumAffecter.HediffGrid.Notify_SourceDespawned(this);
+                map.Tiberium().Hediffs.HediffGrid.Notify_SourceDespawned(this);
                 Reset(map);
             }
         }
@@ -49,7 +49,7 @@ namespace TiberiumRim
         {
             if (ShouldRadiate && !IsRadiating)
             {
-                parent.Map.Tiberium().TiberiumAffecter.HediffGrid.Notify_SourceSpawned(this);
+                parent.Map.Tiberium().Hediffs.HediffGrid.Notify_SourceSpawned(this);
                 SetRadiation();
             }
         }
@@ -81,7 +81,7 @@ namespace TiberiumRim
                 Log.Error(SourceThing + " trying to reset radiation before setting radiation!");
                 return;
             }
-            var affecter = map.Tiberium().TiberiumAffecter;
+            var affecter = map.Tiberium().Hediffs;
             foreach (var cell in AffectedCells)
             {
                 if (!cell.InBounds(map)) continue;
@@ -99,7 +99,7 @@ namespace TiberiumRim
                 Log.Error(SourceThing + " trying to set radiation after already setting radiation!");
                 return;
             }
-            var affecter = parent.Map.Tiberium().TiberiumAffecter;
+            var affecter = parent.Map.Tiberium().Hediffs;
             foreach (var cell in AffectedCells)
             {
                 if (!cell.InBounds(parent.Map)) continue;

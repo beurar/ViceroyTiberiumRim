@@ -22,6 +22,8 @@ using Verse.AI;
 using Verse.Sound;
 using MapInterface = RimWorld.MapInterface;
 using LudeonTK;
+using TeleCore;
+using TeleCore.Network.Bills;
 
 namespace TiberiumRim
 {
@@ -869,7 +871,7 @@ namespace TiberiumRim
             {
                 //Suppression Field Logic
                 Map map = Traverse.Create(__instance).Field("map").GetValue<Map>();
-                var suppression = map.Tiberium().SuppressionInfo;
+                var suppression = map.Tiberium().Suppression;
                 if (suppression.IsInSuppressionCoverage(c, out List<Comp_Suppression> sups))
                 {
                     suppression.MarkDirty(sups);
@@ -930,7 +932,7 @@ namespace TiberiumRim
                 if (__instance is Building building)
                 {
                     //Radiation Logic
-                    var radiation = building.Map.Tiberium().TiberiumAffecter.HediffGrid;
+                    var radiation = building.Map.Tiberium().Hediffs.HediffGrid;
                     if (radiation.IsInRadiationSourceRange(__instance.Position))
                     {
                         List<IRadiationSource> sources = radiation.RadiationSourcesAt(building.Position);
@@ -942,7 +944,7 @@ namespace TiberiumRim
 
                     if (!building.CanBeSeenOver())
                     {
-                        var suppression = building.Map.Tiberium().SuppressionInfo;
+                        var suppression = building.Map.Tiberium().Suppression;
                         if (suppression.IsInSuppressionCoverage(building.Position, out List<Comp_Suppression> sups))
                         {
                             suppression.MarkDirty(sups);
@@ -988,7 +990,7 @@ namespace TiberiumRim
                 if (updateRadiationGrid)
                 {
                     //Radiation Logic
-                    var radiation = building.Map.Tiberium().TiberiumAffecter.HediffGrid;
+                    var radiation = building.Map.Tiberium().Hediffs.HediffGrid;
                     if (radiation.IsInRadiationSourceRange(instancePos))
                     {
                         List<IRadiationSource> sources = radiation.RadiationSourcesAt(building.Position);
@@ -1012,7 +1014,7 @@ namespace TiberiumRim
 
                 if (updateSuppressionGrid)
                 {
-                    var suppression = instanceMap.Tiberium().SuppressionInfo;
+                    var suppression = instanceMap.Tiberium().Suppression;
                     if (suppression.IsInSuppressionCoverage(instancePos, out List<Comp_Suppression> sups))
                     {
                         suppression.MarkDirty(sups);
@@ -1022,7 +1024,7 @@ namespace TiberiumRim
                 if (updateRadiationGrid)
                 {
                     //Radiation Logic
-                    var radiation = instanceMap.Tiberium().TiberiumAffecter.HediffGrid;
+                    var radiation = instanceMap.Tiberium().Hediffs.HediffGrid;
                     if (radiation.IsInRadiationSourceRange(instancePos))
                     {
                         List<IRadiationSource> sources = radiation.RadiationSourcesAt(instancePos);
@@ -1159,19 +1161,19 @@ namespace TiberiumRim
             }
         }
 
-        [HarmonyPatch(typeof(BillUtility))]
-        [HarmonyPatch("MakeNewBill")]
-        public static class MakeNewBillPatch
-        {
-            public static void Postfix(ref Bill __result)
-            {
-                if(__result.recipe is TRecipeDef)
-                {
-                    TiberiumBill tibBill = new TiberiumBill(__result.recipe as TRecipeDef);
-                    __result = tibBill;
-                }
-            }
-        }
+        //[HarmonyPatch(typeof(BillUtility))]
+        //[HarmonyPatch("MakeNewBill")]
+        //public static class MakeNewBillPatch
+        //{
+        //    public static void Postfix(ref Bill __result)
+        //    {
+        //        if(__result.recipe is RecipeDef_Network)
+        //        {
+        //            CustomNetworkBill tibBill = new CustomNetworkBill(__result.recipe as RecipeDef_Network);
+        //            __result = tibBill;
+        //        }
+        //    }
+        //}
 
         //Scenario Chooser Patch
         [HarmonyPatch(typeof(Page_SelectScenario))]
@@ -1229,132 +1231,6 @@ namespace TiberiumRim
         }
 
         //### TRANSPILER AREA - WE GOING DEEP BOY
-
-        //### Update Call Injections
-        //# Tick Update
-
-        //# Render Update
-        [HarmonyPatch(typeof(MapInterface))]
-        [HarmonyPatch("MapInterfaceUpdate")]
-        public static class MapInterfaceUpdatePatch
-        {
-            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                MethodInfo helper = AccessTools.Method(typeof(MapInterfaceUpdatePatch), nameof(TiberiumMapInterfaceUpdate));
-                MethodInfo updateCall = AccessTools.Method(typeof(DeepResourceGrid), "DeepResourceGridUpdate");
-
-                bool patched = false;
-                foreach (var code in instructions)
-                {
-                    yield return code;
-                    if (code.Calls(updateCall) && !patched)
-                    {
-                        yield return new CodeInstruction(OpCodes.Call, helper); //Consumes 1 and returns Rect
-                        patched = true;
-                    }
-                }
-            }
-
-            public static void TiberiumMapInterfaceUpdate()
-            {
-                Find.CurrentMap.Tiberium().TiberiumMapInterfaceUpdate();
-            }
-        }
-
-        //MessageReadOut
-        [HarmonyPatch(typeof(Message))]
-        [HarmonyPatch("Draw")]
-        public static class MessageDrawPatch
-        {
-
-        }
-
-        //Readout
-        [HarmonyPatch(typeof(ResourceReadout))]
-        [HarmonyPatch("ResourceReadoutOnGUI")]
-        public static class ResourceReadoutOnGUIPatch
-        {
-            public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                MethodInfo helper = AccessTools.Method(typeof(ResourceReadoutOnGUIPatch),
-                    nameof(AdjustResourceReadoutDownwards));
-
-                bool patched = false;
-                foreach (var code in instructions)
-                {
-                    yield return code;
-                    if (code.opcode == OpCodes.Stloc_0 && !patched)
-                    {
-                        yield return new CodeInstruction(OpCodes.Ldloc_0); //Rect on stack  
-                        yield return new CodeInstruction(OpCodes.Call, helper); //Consumes 1 and returns Rect
-                        yield return new CodeInstruction(OpCodes.Stloc_0);
-                        patched = true;
-                    }
-                }
-
-            }
-
-            public static void Postfix(ResourceReadout __instance)
-            {
-                if (ShouldFix)
-                    DrawCredits();
-            }
-
-            static Rect AdjustResourceReadoutDownwards(Rect rect)
-            {
-                if (!ShouldFix) return rect;
-
-                Rect newRect = new Rect(rect);
-                newRect.yMin += TotalHeight.Value + 10f;
-                return newRect;
-            }
-
-            private static bool ShouldFix => GetTiberiumCredits(Find.CurrentMap) > 0;
-
-            static float GetTiberiumCredits(Map map)
-            {
-                return GetNetwork(map)?.TotalSiloNetworkValue ?? 0;
-            }
-
-            private static float? TotalHeight = 120;
-            private static float? ResourceReadoutHeight = 60f;
-
-            static TiberiumNetwork GetNetwork(Map map)
-            {
-                return map.Tiberium().TNWManager.MainController?.Network;
-            }
-            
-            static void DrawCredits()
-            {
-                //
-                Rect mainRect = new Rect(5f, 10, 120f, TotalHeight.Value);
-                string creditLabel = "TR_Credits".Translate();
-                Vector2 creditLabelSize = Text.CalcSize(creditLabel);
-                Rect creditLabelRect = new Rect(5, mainRect.y, mainRect.width, creditLabelSize.y + 8);
-                Rect readoutRect = new Rect(5, creditLabelRect.yMax, mainRect.width, ResourceReadoutHeight.Value);
-
-                //Main
-                //Widgets.DrawWindowBackground(mainRect);
-                TRWidgets.DrawColoredBox(mainRect, new Color(1,1,1,0.125f), Color.white, 1);
-                Text.Anchor = TextAnchor.MiddleCenter;
-                Widgets.Label(creditLabelRect, creditLabel); 
-                Text.Anchor = default;
-                Widgets.DrawLine(new Vector2(5f, creditLabelRect.yMax), new Vector2(125f, creditLabelRect.yMax), Color.white, 1f);
-
-                TRWidgets.DrawTiberiumTypeReadout(readoutRect, GameFont.Tiny, -2, GetNetwork(Find.CurrentMap).TypeValues, out float height);
-                ResourceReadoutHeight = height;
-
-                Text.Font = GameFont.Tiny;
-                string totalLabel = "TR_CreditsTotal".Translate(Math.Round(GetTiberiumCredits(Find.CurrentMap)));
-                Vector2 totalLabelSize = Text.CalcSize(totalLabel);
-                Rect totalLabelRect = new Rect(10f, readoutRect.yMax, mainRect.width, totalLabelSize.y);
-                Widgets.Label(totalLabelRect, totalLabel);
-                Text.Font = default;
-
-                TotalHeight = totalLabelRect.yMax - mainRect.y;
-                //
-            }
-        }
     }
 
     // Disabled this - Not sure what it is for but it errors

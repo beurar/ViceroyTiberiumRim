@@ -23,7 +23,7 @@ namespace TiberiumRim
 
         public IEnumerable<Thing> Targets(Map map)
         {
-            var tnw = map.Tiberium().TNWManager;
+            var tnw = map.Tiberium().MapComp;
             var buildings = tnw.MainStructureSet.Crafters.Select(t => t.parent);
             return buildings;
         }

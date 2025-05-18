@@ -196,7 +196,7 @@ namespace TiberiumRim
             tiberiumField?.DrawField();
 
             //DebugDraw
-            TiberiumGrid grid = TiberiumComp.TiberiumInfo.TiberiumGrid;
+            TiberiumGrid grid = TiberiumComp.Info.TiberiumGrid;
             //Draw Tiberium Cells
             if(showTiberium)
                 GenDraw.DrawFieldEdges(grid.TiberiumBoolGrid.ActiveCells.ToList(), Color.red);

@@ -6,16 +6,17 @@ using HarmonyLib;
 using Verse;
 using RimWorld;
 using UnityEngine;
+using TeleCore;
 
 namespace TiberiumRim
 {
-    public class CompTNW_Turret : CompTNW
+    public class Comp_Turret : CompNetwork
     {
-        public override Vector3[] DrawPositions => new Vector3[] { parent.DrawPos, parent.DrawPos, parent.DrawPos };
-        public override Color[] ColorOverrides => new Color[] { Color.white, Color.white, Color.white };
-        public override float[] OpacityFloats => new float[] { Container.StoredPercent, 1f, Container.StoredPercent };
-        public override float?[] RotationOverrides => new float?[] { Rotation(DrawPositions[0]), Rotation(DrawPositions[1]), Rotation(DrawPositions[2])};
-        public override bool[] DrawBools => new bool[] { true, StructureSet.Pipes.Any(), StructureSet.Pipes.Any() };
+        //public override Vector3[] DrawPositions => new Vector3[] { parent.DrawPos, parent.DrawPos, parent.DrawPos };
+        //public override Color[] ColorOverrides => new Color[] { Color.white, Color.white, Color.white };
+        //public override float[] OpacityFloats => new float[] { Container.StoredPercent, 1f, Container.StoredPercent };
+        //public override float?[] RotationOverrides => new float?[] { Rotation(DrawPositions[0]), Rotation(DrawPositions[1]), Rotation(DrawPositions[2])};
+        //public override bool[] DrawBools => new bool[] { true, StructureSet.Pipes.Any(), StructureSet.Pipes.Any() };
 
         private float Rotation(Vector3 fromPos)
         {
@@ -34,7 +35,7 @@ namespace TiberiumRim
         //public override float[] DrawRotations => new float[] { ((Building_TurretGun)parent)..Rotation.AsAngle, parent.Rotation.AsAngle, parent.Rotation.AsAngle };
     }
 
-    public class CompProperties_TNWTurret : CompProperties_TNW
+    public class CompProperties_TNWTurret : CompProperties
     {
         public TurretProperties turret;
     }

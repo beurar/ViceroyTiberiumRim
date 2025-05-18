@@ -1,176 +1,114 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using Verse;
+using TeleCore.FlowCore;
+using TeleCore;
 
 namespace TiberiumRim
 {
     /// <summary>
-    /// The TiberiumCost can define a general cost of any tiberium type, or specify a range of specific tiberium type values
+    /// Defines a cost in terms of Tiberium volumes from the TeleCore fluid system.
     /// </summary>
     public class TiberiumCost
     {
         public bool useDirectStorage = false;
-        //GeneralValue
-        public float generalCost;
-        //Specified Types (and potential specific costs)
-        public List<TiberiumTypeCost> specificTypes;
 
-        public bool HasSpecifics => SpecificCosts.Any();
-        public float SpecificCost => HasSpecifics ? SpecificCosts.Sum(t => t.cost) : 0;
+        // General cost in total volume
+        public float generalCost;
+
+        // Specific fluid types and exact required amounts
+        public List<NetworkValueCost> specificTypes;
+
+        public bool HasSpecifics => specificTypes?.Any(c => c != null && c.amount > 0 && c.valueDef != null) == true;
+        public float SpecificCost => specificTypes?.Where(c => c.HasValue).Sum(c => c.amount) ?? 0f;
         public float TotalCost => generalCost + SpecificCost;
 
-        public IEnumerable<TiberiumTypeCost> SpecificCosts => specificTypes.Where(s => s.HasValue);
-        public IEnumerable<TiberiumValueType> AllowedTypes => specificTypes.Select(c => c.valueType);
+        public IEnumerable<NetworkValueCost> SpecificCosts => specificTypes?.Where(s => s.HasValue) ?? Enumerable.Empty<NetworkValueCost>();
+        public IEnumerable<NetworkValueDef> AllowedTypes => SpecificCosts.Select(c => c.valueDef);
 
-        private float ValueForTypesWithoutSpecifics(CompTNW compTNW)
+        private float ValueForTypesWithoutSpecifics(Comp_TiberiumContainer container)
         {
-            float totalValue = 0;
-            //Go through all allowed types by this cost
+            float totalValue = 0f;
             foreach (var type in AllowedTypes)
             {
-                var valueForType = useDirectStorage ? compTNW.Container.ValueForType(type) : compTNW.Network.NetworkValueFor(type);
-                //Adjust the available value by the previously "taken" amount from the specific cost
-                var specType = SpecificCosts.First(t => t.valueType == type);
-                if (specType != null)
-                {
-                    totalValue += Mathf.Clamp(valueForType - specType.cost, 0, float.PositiveInfinity);
-                }
+                float stored = (float)container.Get(type);
+                float specific = SpecificCosts.FirstOrDefault(c => c.valueDef == type)?.amount ?? 0f;
+                totalValue += Mathf.Max(0f, stored - specific);
             }
             return totalValue;
         }
 
-        public bool CanPayWith(CompTNW compTNW)
+        public bool CanPayWith(Comp_TiberiumContainer container)
         {
-            return useDirectStorage ? CanPayWith(compTNW.Container, compTNW) : CanPayWith(compTNW.Network, compTNW);
-        }
-
-        //
-        private bool CanPayWith(TiberiumContainer container, CompTNW compTNW)
-        {
-            if (container.TotalStorage < TotalCost) return false;
-            float totalNeeded = TotalCost;
-            //Check For Specifics
-            if (HasSpecifics)
+            if (useDirectStorage)
             {
+                float totalStored = (float)container.TotalStored;
+                if (totalStored < TotalCost) return false;
+
+                float needed = TotalCost;
                 foreach (var typeCost in SpecificCosts)
                 {
-                    var specCost = typeCost.cost;
-                    if (container.ValueForType(typeCost.valueType) >= specCost)
-                        totalNeeded -= specCost;
+                    if (container.Get(typeCost.valueDef) >= typeCost.amount)
+                        needed -= typeCost.amount;
                 }
-            }
-            //Check For Generic Cost Value
-            if (generalCost > 0)
-            {
-                if (ValueForTypesWithoutSpecifics(compTNW) >= generalCost)
+
+                if (generalCost > 0f)
                 {
-                    totalNeeded -= generalCost;
+                    if (ValueForTypesWithoutSpecifics(container) >= generalCost)
+                        needed -= generalCost;
                 }
+
+                return needed <= 0f;
             }
-            return totalNeeded == 0;
+
+            return false; // external networks not handled in this context
         }
 
-        private bool CanPayWith(TiberiumNetwork network, CompTNW compTNW)
+        public void PayWithContainerComp(Comp_TiberiumContainer container)
         {
-            var totalNetworkValue = network.TotalNetworkValue;
-            if (totalNetworkValue < TotalCost) return false;
-            float totalNeeded = TotalCost;
-            //Check For Specifics
-            if (HasSpecifics)
-            {
-                foreach (var typeCost in SpecificCosts)
-                {
-                    var specCost = typeCost.cost;
-                    if (network.NetworkValueFor(typeCost.valueType) >= specCost)
-                        totalNeeded -= specCost;
-                }
-            }
-            //Check For Generic Cost Value
-            if (generalCost > 0)
-            {
-                if (ValueForTypesWithoutSpecifics(compTNW) >= generalCost)
-                {
-                    totalNeeded -= generalCost;
-                }
-            }
-            return totalNeeded == 0;
-        }
-
-        private void PayWith(TiberiumContainer container, CompTNW compTNW)
-        {
-            var totalCost = TotalCost;
+            float totalCost = TotalCost;
             if (totalCost <= 0) return;
 
             foreach (var typeCost in SpecificCosts)
             {
-                if (container.TryConsume(typeCost.valueType, typeCost.cost))
-                    totalCost -= typeCost.cost;
+                if (container.TryTake(typeCost.valueDef, typeCost.amount))
+                    totalCost -= typeCost.amount;
             }
 
-            foreach (var type in AllowedTypes)
+            foreach (var def in AllowedTypes)
             {
-                if (container.TryRemoveValue(type, totalCost, out float actualVal))
-                {
-                    totalCost -= actualVal;
-                }
-            }
-            if (totalCost > 0)
-                Log.Warning("Paying " + this + " for " + container.parent + " had leftOver: " + totalCost);
-        }
-
-        public void PayWith(CompTNW compTNW)
-        {
-            if (useDirectStorage)
-                PayWith(compTNW.Container, compTNW);
-            else
-                PayWith(compTNW.Network, compTNW);
-        }
-
-        private void PayWith(TiberiumNetwork network, CompTNW compTNW)
-        {
-            var totalCost = TotalCost;
-            if (totalCost <= 0) return;
-            var storages = network.NetworkSet.Storages;
-            foreach (var storage in storages.TakeWhile(storage => !(totalCost <= 0)))
-            {
-                foreach (var typeCost in SpecificCosts)
-                {
-                    if (storage.Container.TryConsume(typeCost.valueType, typeCost.cost))
-                        totalCost -= typeCost.cost;
-                }
-
-                foreach (var type in AllowedTypes)
-                {
-                    if (storage.Container.TryRemoveValue(type, totalCost, out float actualVal))
-                    {
-                        totalCost -= actualVal;
-                    }
-                }
+                double remaining = totalCost;
+                if (container.TryTake(def, remaining))
+                    totalCost -= (float)remaining;
             }
 
-            if(totalCost > 0)
-                Log.Warning("Paying " + this + " for " + network + " had leftOver: " + totalCost);
+            if (totalCost > 0f)
+                Log.Warning($"[TiberiumCost] Payment from {container.parent} incomplete. Remaining: {totalCost}");
         }
 
         public override string ToString()
         {
-            string retString = "TiberiumCost([" + generalCost + "]";
-            foreach (var specificCost in SpecificCosts)
-            {
-                retString += "|" + specificCost.valueType.ShortLabel() + ": " + specificCost.cost;
-            }
+            StringBuilder sb = new StringBuilder();
+            sb.Append("TiberiumCost(");
+            sb.Append("General: ").Append(generalCost);
 
-            retString += "[";
-            foreach (var type in AllowedTypes)
+            foreach (var c in SpecificCosts)
             {
-                retString += "|" + type.ShortLabel();
+                sb.Append(" | ").Append(c.valueDef?.defName ?? "null").Append(": ").Append(c.amount);
             }
-            return retString + "])";
+            sb.Append(")");
+            return sb.ToString();
         }
+    }
+
+    public class NetworkValueCost
+    {
+        public NetworkValueDef valueDef;
+        public float amount;
+
+        public bool HasValue => valueDef != null && amount > 0f;
     }
 }

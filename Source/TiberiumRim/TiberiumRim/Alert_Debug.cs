@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RimWorld;
+using TeleCore;
 using Verse;
 
 namespace TiberiumRim
@@ -19,16 +20,15 @@ namespace TiberiumRim
             
             MapComponent_Particles particles = Find.CurrentMap.GetComponent<MapComponent_Particles>();
             MapComponent_Tiberium tiberium = Find.CurrentMap.GetComponent<MapComponent_Tiberium>();
-            TiberiumMapInfo mapinfo = tiberium.TiberiumInfo;
-            MapComponent_TNWManager tnwManager = Find.CurrentMap.GetComponent<MapComponent_TNWManager>();
+            TiberiumMapInfo mapinfo = tiberium.Info;
+            MapComponent_TeleCore tnwManager = Find.CurrentMap.GetComponent<MapComponent_TeleCore>();
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Current Particles: " + particles.SavedParticles.Count);
             sb.AppendLine("Total AllProducers: " + tiberium.StructureInfo.AllProducers.Count);
-            int TibCount = tiberium.TiberiumInfo.TotalCount;
+            int TibCount = tiberium.Info.TotalCount;
             sb.AppendLine("Total Tiberium: " + TibCount);
-            sb.AppendLine("Total Cells: " + tiberium.TiberiumInfo.TotalCount);
-            sb.AppendLine("Active percent: " + tiberium.TiberiumInfo.Coverage.ToStringPercent());
-            sb.AppendLine("Networks: " + tnwManager.Networks.Count);
+            sb.AppendLine("Total Cells: " + tiberium.Info.TotalCount);
+            sb.AppendLine("Active percent: " + tiberium.Info.Coverage.ToStringPercent());
             sb.AppendLine("MapInfo:\n Valuables: " + mapinfo.TiberiumCrystals[HarvestType.Valuable].Count + " - " +
                           mapinfo.TiberiumCrystalTypes[HarvestType.Valuable].Count + " types" + "\n Unvaluables: " +
                           mapinfo.TiberiumCrystals[HarvestType.Unvaluable].Count + " - " +

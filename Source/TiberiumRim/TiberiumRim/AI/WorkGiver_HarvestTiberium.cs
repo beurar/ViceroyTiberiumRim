@@ -26,7 +26,7 @@ namespace TiberiumRim
         {
             if (pawn is Harvester harvester)
             {
-                return harvester.HarvestMode == HarvestMode.Moss ? harvester.Map.Tiberium().MossAvailable : harvester.Map.Tiberium().TiberiumAvailable;
+                return harvester.HarvestMode == HarvestMode.Moss ? harvester.Map.Tiberium().Info.AnyMossPresent : harvester.Map.Tiberium().Info.AnyCrystalsPresent;
             }
             return true;
         }
@@ -35,9 +35,9 @@ namespace TiberiumRim
         {
             if (pawn is Harvester harvester)
             {
-                if (harvester.Container.CapacityFull) return null;
+                if (harvester.ContainerComp.IsFull) return null;
                 var manager = pawn.Map.GetComponent<MapComponent_Tiberium>();
-                return manager.TiberiumInfo.AllTiberiumCrystals;
+                return manager.Info.AllTiberiumCrystals;
             }
             return null;
         }

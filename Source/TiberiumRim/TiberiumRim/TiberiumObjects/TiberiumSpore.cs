@@ -41,21 +41,16 @@ namespace TiberiumRim
         {
             get
             {
-                Color color = base.Color;
-                switch (crystalDef.TiberiumValueType)
-                {
-                    case TiberiumValueType.Green:
-                        color *= MainTCD.Main.GreenColor;
-                        break;
-                    case TiberiumValueType.Blue:
-                        color *= MainTCD.Main.BlueColor;
-                        break;
-                    case TiberiumValueType.Red:
-                        color *= MainTCD.Main.RedColor;
-                        break;
-                }
-                return color;
+                Color baseColor = base.Color;
+
+                // Ensure valid crystal + networkValueDef
+                Color? overlay = crystalDef?.tiberium?.networkValue?.valueColor;
+                if (overlay != null)
+                    baseColor *= overlay.Value;
+
+                return baseColor;
             }
         }
+
     }
 }

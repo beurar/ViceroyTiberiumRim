@@ -5,6 +5,7 @@ using System.Text;
 using Verse;
 using RimWorld;
 using UnityEngine.Windows.WebCam;
+using TeleCore;
 
 namespace TiberiumRim
 {
@@ -24,7 +25,6 @@ namespace TiberiumRim
         public float GrowthPerTick => growthPerTick ??= 1f / ((GenDate.TicksPerDay * tiberium.growDays) / GenTicks.TickLongInterval);
 
         public IEnumerable<IntVec3> SpreadRangeMask => radialCells ??= GenRadial.RadialPatternInRadius(tiberium.spreadRadius);
-
 
         public bool HasOutcomesFor(TerrainDef terrain)
         {
@@ -53,16 +53,16 @@ namespace TiberiumRim
             return toPlant != null;
         }
 
-        public TiberiumValueType TiberiumValueType => tiberium.type;
+        public NetworkValueDef NetworkValue => tiberium.networkValue;
 
         public HarvestType HarvestType
         {
             get
             {
-                return TiberiumValueType switch
+                if (NetworkValue == null) return HarvestType.Unharvestable;
+                return NetworkValue.defName switch
                 {
-                    TiberiumValueType.Unharvestable => HarvestType.Unharvestable,
-                    TiberiumValueType.Sludge => HarvestType.Unvaluable,
+                    "TibSludge" => HarvestType.Unvaluable,
                     _ => HarvestType.Valuable
                 };
             }
@@ -70,7 +70,6 @@ namespace TiberiumRim
 
         public bool IsInfective => tiberium.infects;
         public bool IsMoss => HarvestType == HarvestType.Unvaluable;
-
         public bool DamagesThings => tiberium.deteriorationDamage.Average > 0;
     }
 }

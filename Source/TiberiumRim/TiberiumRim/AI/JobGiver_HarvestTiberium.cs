@@ -93,7 +93,7 @@ namespace TiberiumRim
                 },
                 tickAction = delegate
                 {
-                    if (Harvester.Container.CapacityFull)
+                    if (Harvester.ContainerComp.IsFull)
                     {
                         EndJobWith(JobCondition.InterruptForced);
                         return;
@@ -101,7 +101,7 @@ namespace TiberiumRim
 
                     if (ticksPassed > ticksToHarvest)
                     {
-                        if (TiberiumCrystal.Spawned && !Harvester.Container.CapacityFull)
+                        if (TiberiumCrystal.Spawned && !Harvester.ContainerComp.IsFull)
                         {
                             TiberiumCrystal.DeSpawn();
                         }

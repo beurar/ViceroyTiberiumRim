@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using RimWorld;
+using TeleCore;
 using UnityEngine;
 using Verse;
 
@@ -19,10 +20,10 @@ namespace TiberiumRim
             boundGeyser.tiberiumSpike = this;
         }
 
-        public CompTNW CompTNW => this.TryGetComp<CompTNW>();
+        public CompNetwork CompTNW => this.TryGetComp<CompNetwork>();
 
         public override float[] OpacityFloats => new float[] { 1f, 1f};
-        public override bool[] DrawBools => new bool[] { CompTNW.HasConnection, CompTNW.HasConnection && CompTNW.CompPower.PowerOn};
+        public override bool[] DrawBools => new bool[] { CompTNW.IsWorking, CompTNW.IsWorking && CompTNW.CompPower.PowerOn};
         public override Color[] ColorOverrides => new Color[] { Color.white, Color.white};
 
         public override IEnumerable<InspectTabBase> GetInspectTabs()

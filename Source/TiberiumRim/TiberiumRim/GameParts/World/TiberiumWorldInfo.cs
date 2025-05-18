@@ -25,7 +25,7 @@ namespace TiberiumRim
 
         public Map Map(int tile) => Find.World.worldObjects.WorldObjectAt<MapParent>(tile)?.Map;
         public bool HasMap(int tile) => Map(tile) != null;
-        public float CoverageAt(int tile) => HasMap(tile) ? Map(tile).Tiberium().TiberiumInfo.Coverage : (tiberiumGrid[tile] / (float)maxLevel);
+        public float CoverageAt(int tile) => HasMap(tile) ? Map(tile).Tiberium().Info.Coverage : (tiberiumGrid[tile] / (float)maxLevel);
 
         public bool FullyInfected(int tile)
         {

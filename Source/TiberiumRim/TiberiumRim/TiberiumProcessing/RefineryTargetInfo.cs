@@ -15,7 +15,7 @@ namespace TiberiumRim
                 canTargetLocations = false,
                 canTargetPawns = false,
                 canTargetSelf = false,                
-                validator = t => t.Thing is Building b && b.TryGetComp<CompTNW_Refinery>() != null                       
+                validator = t => t.Thing is Building b && b.TryGetComp<Comp_TiberiumRefinery>() != null                       
             };
         }
     }

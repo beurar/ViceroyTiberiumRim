@@ -19,7 +19,7 @@ namespace TiberiumRim
 
         public float Coverage
         {
-            get { return HasMap ? Map.Tiberium().TiberiumInfo.Coverage : coverageInt; }
+            get { return HasMap ? Map.Tiberium().Info.Coverage : coverageInt; }
             set => coverageInt = value;
         }
 

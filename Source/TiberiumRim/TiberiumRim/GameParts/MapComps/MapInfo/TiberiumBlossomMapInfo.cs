@@ -9,7 +9,7 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class TiberiumBlossomInfo : MapInformation, ICellBoolGiver
+    public class TiberiumBlossomMapInfo : MapInformation, ICellBoolGiver
     {
         private readonly CellBoolDrawer drawer;
         private readonly float mapRadius;
@@ -20,7 +20,7 @@ namespace TiberiumRim
         private BoolGrid positionGrid;
         //private static List<IntVec3> positions;
 
-        public TiberiumBlossomInfo(Map map) : base(map)
+        public TiberiumBlossomMapInfo(Map map) : base(map)
         {
             drawer = new CellBoolDrawer(this, map.Size.x, map.Size.z, 0.4f);
             mapRadius = map.Center.DistanceToEdge(map);

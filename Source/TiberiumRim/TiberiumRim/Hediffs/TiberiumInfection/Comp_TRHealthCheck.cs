@@ -25,7 +25,7 @@ namespace TiberiumRim
 
         private Pawn Pawn => parent as Pawn;
 
-        private RadiationInfectionGrid Grid => Pawn.MapHeld.Tiberium().TiberiumAffecter.HediffGrid;
+        private RadiationInfectionGrid Grid => Pawn.MapHeld.Tiberium().Hediffs.HediffGrid;
         public bool IsInTiberium => Grid.IsAffected(Pawn.Position);
 
         public bool IsTiberiumImmune => Pawn.GetStatValue(TiberiumDefOf.TiberiumInfectionResistance) >= 1 &&

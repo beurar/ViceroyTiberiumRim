@@ -18,8 +18,8 @@ namespace TiberiumRim
             Map map = Find.CurrentMap;
             Predicate<IntVec3> pred = cell => !cell.Roofed(map) && GenSight.LineOfSight(center, cell, map);
             GenDraw.DrawFieldEdges(TRUtils.SectorCells(center, map, props.radius, props.angle, rot.AsAngle,false, pred).ToList(), Color.blue);
-            var coveredCells = map.Tiberium().SuppressionInfo.CoveredCells.ToList();
-            var suppressedCells = map.Tiberium().SuppressionInfo.SuppressedCells.ToList();
+            var coveredCells = map.Tiberium().Suppression.CoveredCells.ToList();
+            var suppressedCells = map.Tiberium().Suppression.SuppressedCells.ToList();
             GenDraw.DrawFieldEdges(coveredCells, Color.gray);
             GenDraw.DrawFieldEdges(suppressedCells, Color.cyan);
 

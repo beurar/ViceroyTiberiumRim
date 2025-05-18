@@ -10,7 +10,7 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class TiberiumWaterInfo : MapInformation, ICellBoolGiver
+    public class TiberiumWaterMapInfo : MapInformation, ICellBoolGiver
     {
         public BoolGrid waterCells;
         public BoolGrid riverCells;
@@ -25,7 +25,7 @@ namespace TiberiumRim
 
         private List<IntVec3> dirtyCells = new List<IntVec3>();
 
-        public TiberiumWaterInfo(Map map) : base(map)
+        public TiberiumWaterMapInfo(Map map) : base(map)
         {
             waterCells = new BoolGrid(map);
             riverCells = new BoolGrid(map);

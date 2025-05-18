@@ -6,20 +6,21 @@ using Verse;
 using RimWorld;
 using UnityEngine;
 using System.Collections;
+using TeleCore;
 
 namespace TiberiumRim
 {
     public class TNW_Pipe : FXBuilding
     {
         public override Graphic Graphic => TiberiumContent.TiberiumNetworkPipes;
-        public CompTNW_Pipe CompTNW => this.TryGetComp<CompTNW_Pipe>();
+        public CompNetwork CompTNW => this.TryGetComp<CompNetwork>();
 
         public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
             base.DynamicDrawPhase(drawPhase);
-            if (CompTNW.Network != null)
+            if (CompTNW != null)
             {
-                Color color = CompTNW.Network.GeneralColor;
+                Color color = Color.magenta ;
                 TiberiumContent.TiberiumNetworkPipesGlow.ColoredVersion(ShaderDatabase.MoteGlow, color, color).Draw(this.DrawPos + Altitudes.AltIncVect, Rotation, this);
             }
         }

@@ -28,7 +28,7 @@ namespace TiberiumRim
         public List<string> neededTags;
         public List<string> ignoreTags;
 
-        //We first check if there is anythinh to ignore, if so, we skip it
+        //We first check if there is anything to ignore, if so, we skip it
         //We then check if we have fixed terrain defs, if so, we accept it
         //If it is not accepted by default, we check if any tags overlap, if so, we accept it
         public bool Allows(TerrainDef def)

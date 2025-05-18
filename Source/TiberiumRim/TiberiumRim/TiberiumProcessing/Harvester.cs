@@ -31,20 +31,18 @@ namespace TiberiumRim
     {
         public float unloadValue = 0.125f;
         public float harvestValue = 0.125f;
-        public int maxStorage;
         public float explosionRadius = 7;
         public ThingDef wreckDef;
-        public List<TiberiumValueType> acceptedTypes = new List<TiberiumValueType>();
     }
 
     public class Harvester : MechanicalPawn, IContainerHolder
     {
         public new HarvesterKindDef kindDef => (HarvesterKindDef) base.kindDef;
-        protected TiberiumContainer container;
+        protected Comp_TiberiumContainer container;
 
         //Data
         private IntVec3 lastKnownPos;
-        private CompTNW_Refinery compRefinery;
+        private Comp_TiberiumRefinery compRefinery;
 
         //Settings
         private bool forceReturn = false;
@@ -52,7 +50,8 @@ namespace TiberiumRim
         private TiberiumProducer preferredProducer;
         private TiberiumCrystalDef preferredType;
 
-        public CompTNW_Refinery RefineryComp => compRefinery;
+        public Comp_TiberiumRefinery RefineryComp => compRefinery;
+        public Comp_TiberiumContainer ContainerComp => container;
         public Building Refinery
         {
             get => ParentBuilding;
@@ -96,17 +95,17 @@ namespace TiberiumRim
         public bool PlayerInterrupt => ShouldReturnToIdle || Drafted;
 
         //Data Bools
-        private bool ContainerFull => Container.CapacityFull;
+        private bool ContainerFull => ContainerComp.IsFull;
 
-        private bool HasAvailableTiberium => HarvestMode == HarvestMode.Moss ? TiberiumManager.MossAvailable : TiberiumManager.TiberiumAvailable;
+        private bool HasAvailableTiberium => HarvestMode == HarvestMode.Moss ? TiberiumManager.MossAvailable() : TiberiumManager.TiberiumAvailable();
 
         //Priority Bools
-        private bool ShouldIdle    => Container.Empty && (!HasAvailableTiberium || (Container.TotalStorage > 0 && RefineryComp.Container.CapacityFull));
+        private bool ShouldIdle    => ContainerComp.IsEmpty && (!HasAvailableTiberium || (ContainerComp.IsFull && RefineryComp.Container.IsFull));
         private bool ShouldHarvest => !ContainerFull && HasAvailableTiberium;//CurrentPriority == HarvesterPriority.Harvest;
-        private bool ShouldUnload  => ContainerFull || (container.TotalStorage > 0 && !HasAvailableTiberium);
+        private bool ShouldUnload  => ContainerFull || !HasAvailableTiberium;
 
         private bool CanHarvest => !IsUnloading; // !ContainerFull && HasAvailableTiberium;
-        private bool CanUnload  => Container.TotalStorage > 0 && RefineryComp.CanBeRefinedAt;
+        private bool CanUnload  => ContainerComp.IsEmpty == false && RefineryComp.CanBeRefinedAt;
 
         public bool IsHarvesting
         {
@@ -150,13 +149,12 @@ namespace TiberiumRim
             }
         }
         //FX Settings
-        public override Color[] ColorOverrides => new Color[] { Container.Color };
-        public override float[] OpacityFloats => new float[] { Container.StoredPercent };
+        public override Color[] ColorOverrides => new Color[] { ContainerComp.DominantColor };
+        public override float[] OpacityFloats => new float[] { ContainerComp.StoredPercent };
         public override bool[] DrawBools => new bool[] { true };
 
-        public TiberiumContainer Container => container;
         public void Notify_ContainerFull() { }
-        public void Notify_RefineryDestroyed(CompTNW_Refinery notifier)
+        public void Notify_RefineryDestroyed(Comp_TiberiumRefinery notifier)
         {
             ResolveNewRefinery(notifier);
         }
@@ -177,7 +175,7 @@ namespace TiberiumRim
             {
                 if(Refinery != null)
                 {
-                    compRefinery = Refinery.GetComp<CompTNW_Refinery>();
+                    compRefinery = Refinery.GetComp<Comp_TiberiumRefinery>();
                 }
             }
         }
@@ -187,7 +185,6 @@ namespace TiberiumRim
             base.SpawnSetup(map, respawningAfterLoad);
             if (!respawningAfterLoad)
             {
-                container = new TiberiumContainer(kindDef.maxStorage, kindDef.acceptedTypes, this, this);
                 if (ParentBuilding == null)
                 { 
                     ResolveNewRefinery(); 
@@ -205,17 +202,63 @@ namespace TiberiumRim
         public override void Kill(DamageInfo? dinfo, Hediff exactCulprit = null)
         {
             base.Kill(dinfo, exactCulprit);
-            if (Container.TotalStorage > 0)
+
+            if (!ContainerComp.IsEmpty)
             {
-                var spawnDef = TRUtils.CrystalDefFromType(Container.MainValueType, out bool isGas);
-                float radius = kindDef.explosionRadius * Container.StoredPercent;
-                int damage = (int)(10 * Container.StoredPercent);
-                //TODO: Add Tiberium damagedef
-                GenExplosion.DoExplosion(Position, Map, radius, DamageDefOf.Bomb, this, damage, 5, null, null, null, null, spawnDef, 0.18f);
+                foreach (var kv in ContainerComp.StoredValues)
+                {
+                    var valDef = kv.Key;
+                    var amount = kv.Value;
+
+                    if (amount <= 0 || valDef.ThingDroppedFromContainer == null)
+                        continue;
+
+                    // Determine explosion scale from % of value stored
+                    float percent = (float)(amount / ContainerComp.Capacity);
+                    float radius = kindDef.explosionRadius * percent;
+                    int damage = Mathf.RoundToInt(10 * percent);
+                    int count = Mathf.Max(1, Mathf.FloorToInt((float)(amount / valDef.ValueToThingRatio)));
+
+                    GenExplosion.DoExplosion(
+                        Position,
+                        Map,
+                        radius,
+                        DamageDefOf.Bomb,
+                        this,
+                        damage,
+                        armorPenetration: 0,
+                        explosionSound: null,
+                        weapon: null,
+                        projectile: null,
+                        intendedTarget: null,
+                        postExplosionSpawnThingDef: valDef.ThingDroppedFromContainer,
+                        postExplosionSpawnChance: 1f,
+                        postExplosionSpawnThingCount: count,
+                        applyDamageToExplosionCellsNeighbors: false,
+                        preExplosionSpawnThingDef: null,
+                        preExplosionSpawnChance: 0f,
+                        preExplosionSpawnThingCount: 0,
+                        chanceToStartFire: 0f,
+                        damageFalloff: true,
+                        direction: null,
+                        ignoredThings: null,
+                        affectedAngle: null,
+                        doVisualEffects: true,
+                        propagationSpeed: 1f,
+                        excludeRadius: 0f,
+                        doSoundEffects: true,
+                        postExplosionSpawnThingDefWater: null,
+                        screenShakeFactor: 1f,
+                        flammabilityChanceCurve: null,
+                        overrideCells: null
+                    );
+                }
             }
+
             GenSpawn.Spawn(kindDef.wreckDef, Position, Map);
             this.DeSpawn(DestroyMode.KillFinalize);
         }
+
 
         public override void PreApplyDamage(ref DamageInfo dinfo, out bool absorbed)
         {
@@ -229,7 +272,7 @@ namespace TiberiumRim
             return crystal.IsMoss ? HarvestMode == HarvestMode.Moss : HarvestMode != HarvestMode.Moss;
         }
 
-        public void SetMainRefinery(Building building, CompTNW_Refinery refinery, CompTNW_Refinery lastParent)
+        public void SetMainRefinery(Building building, Comp_TiberiumRefinery refinery, Comp_TiberiumRefinery lastParent)
         {
             if(lastParent != null)
             {
@@ -243,18 +286,21 @@ namespace TiberiumRim
             compRefinery.AddHarvester(this);
         }
 
-        private void ResolveNewRefinery(CompTNW_Refinery lastParent = null)
+        private void ResolveNewRefinery(Comp_TiberiumRefinery lastParent = null)
         {
-            var Refineries = TNWManager.MainStructureSet.Refineries;
-            if (Refineries.NullOrEmpty()) return;
+            if (Map == null || !Map.listerBuildings.allBuildingsColonist.Any()) return;
 
-            foreach (var refinery in Refineries)
-            {
-                if (refinery == lastParent) continue;
-                SetMainRefinery((Building)refinery.parent, refinery, lastParent);
-                return;
-            }
+            var refineries = Map.listerBuildings.allBuildingsColonist
+                .Where(b => b.TryGetComp<Comp_TiberiumRefinery>() is { } comp && comp != lastParent)
+                .Select(b => b.TryGetComp<Comp_TiberiumRefinery>())
+                .ToList();
+
+            if (refineries.NullOrEmpty()) return;
+
+            var newRefinery = refineries.First();
+            SetMainRefinery((Building)newRefinery.parent, newRefinery, lastParent);
         }
+
 
         public new void DynamicDrawPhase(DrawPhase drawPhase)
         {
@@ -265,7 +311,7 @@ namespace TiberiumRim
                 r.center = DrawPos;
                 r.center.z += 1.5f;
                 r.size = new Vector2(3, 0.15f);
-                r.fillPercent = Container.StoredPercent;
+                r.fillPercent = ContainerComp.StoredPercent;
                 r.filledMat = TiberiumContent.Harvester_FilledBar;
                 r.unfilledMat = TiberiumContent.Harvester_EmptyBar;
                 r.margin = 0.12f;
@@ -300,7 +346,7 @@ namespace TiberiumRim
             {
             }
 
-            foreach (var g in Container.GetGizmos())
+            foreach (Gizmo g in ContainerComp.GetGizmos())
             {
                 yield return g;
             }
@@ -374,7 +420,7 @@ namespace TiberiumRim
                     if (targetInfo == null) return;
                     if (targetInfo.Thing is Building building)
                     {
-                        var refinery = targetInfo.Thing.TryGetComp<CompTNW_Refinery>();
+                        var refinery = targetInfo.Thing.TryGetComp<Comp_TiberiumRefinery>();
                         if(refinery != null)
                             SetMainRefinery(building, refinery, RefineryComp);
                         //UpdateRefineries(b);

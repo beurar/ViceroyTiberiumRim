@@ -7,7 +7,7 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class TiberiumAffecter : MapInformation
+    public class TiberiumHediffMapInfo : MapInformation
     {
         private RadiationInfectionGrid hediffGrid;
 
@@ -16,9 +16,9 @@ namespace TiberiumRim
         private bool dirtyIterator = false;
 
         public RadiationInfectionGrid HediffGrid => hediffGrid;
-        public bool ShouldIterate => map.Tiberium().TiberiumInfo.TotalCount > 0;
+        public bool ShouldIterate => map.Tiberium() != null;
 
-        public TiberiumAffecter(Map map) : base(map)
+        public TiberiumHediffMapInfo(Map map) : base(map)
         {
             hediffGrid = new RadiationInfectionGrid(map);
         }
@@ -78,7 +78,7 @@ namespace TiberiumRim
         private IEnumerable<IntVec3> GetCurrentAffectedCells()
         {
             var mapComp = map.Tiberium();
-            var tibInfo = mapComp.TiberiumInfo;
+            var tibInfo = mapComp.Info;
             var tibGrid = tibInfo.TiberiumGrid;
             return tibGrid.AffectedCells.ActiveCells;
         }

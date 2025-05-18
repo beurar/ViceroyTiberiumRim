@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using RimWorld;
 using RimWorld.Planet;
+using TeleCore;
 using UnityEngine;
 using Verse;
 using Verse.AI;
@@ -698,21 +699,6 @@ namespace TiberiumRim
             return null;
         }
 
-        public static string ShortLabel(this TiberiumValueType valueType)
-        {
-            string label = valueType switch
-            {
-                TiberiumValueType.Green => "G",
-                TiberiumValueType.Blue => "B",
-                TiberiumValueType.Red => "R",
-                TiberiumValueType.Sludge => "Slg",
-                TiberiumValueType.Gas => "Gs",
-                _ => string.Empty
-            };
-
-            return label;
-        }
-
         public static Color GetColor(this TiberiumValueType valueType)
         {
             Color color = Color.white;
@@ -836,6 +822,24 @@ namespace TiberiumRim
                 }
             }
             yield break;
+        }
+
+        internal static bool CrystalDefFromNetworkDef(object def, out TiberiumCrystalDef crystalDef)
+        {
+            crystalDef = null;
+
+            var valueDef = def as NetworkValueDef;
+            if (valueDef == null)
+                return false;
+
+            // Expect crystal defs to be named like "Crystal_Green" matching "TibGreen", etc.
+            string suffix = valueDef.defName.Replace("Tib", ""); // e.g. "Green"
+            string targetDefName = $"Tiberium{suffix}";
+
+            crystalDef = DefDatabase<TiberiumCrystalDef>.AllDefs
+                .FirstOrDefault(td => td.defName == targetDefName);
+
+            return crystalDef != null;
         }
     }
 }

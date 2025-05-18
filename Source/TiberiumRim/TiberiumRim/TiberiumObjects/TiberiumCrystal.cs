@@ -212,12 +212,40 @@ namespace TiberiumRim
 
         public void Harvest(Harvester harvester, float amount)
         {
-            if (harvester.Container.TryAddValue(def.TiberiumValueType, 1, out float actualValue))
+            var netVal = def.tiberium.networkValue;
+            if (netVal == null)
             {
-                float adj = amount * (actualValue / 1);
-                Growth -= adj;
+                Log.Warning($"[Tiberium] Tried to harvest crystal '{def.defName}' without a valid NetworkValueDef.");
+                return;
+            }
+
+            var container = harvester.ContainerComp;
+            float valuePerHarvest = def.tiberium.harvestValue;
+
+            if (valuePerHarvest <= 0)
+            {
+                Log.Warning($"[Tiberium] '{def.defName}' has zero harvest value — skipping.");
+                return;
+            }
+
+            double totalVolume = valuePerHarvest * amount;
+
+            if (container.TryAdd(netVal, totalVolume))
+            {
+                Growth -= amount;
                 if (Growth <= 0.01f)
+                {
                     Destroy();
+                }
+            }
+            else
+            {
+                // Optional: partial logic
+                double accepted = Math.Min(container.SpaceLeft, totalVolume);
+                if (accepted > 0 && container.TryAdd(netVal, accepted))
+                {
+                    Growth -= amount * ((float)accepted / (float)totalVolume);
+                }
             }
         }
 
@@ -225,9 +253,9 @@ namespace TiberiumRim
         {
             var value = despawning ? -1 : 1;
             if (def.IsInfective)
-                Map.Tiberium().TiberiumAffecter.AddInfection(Position, value);
+                Map.Tiberium().Hediffs.AddInfection(Position, value);
             if (def.tiberium.radiates)
-                Map.Tiberium().TiberiumAffecter.AddRadiation(Position, value);
+                Map.Tiberium().Hediffs.AddRadiation(Position, value);
         }
 
 

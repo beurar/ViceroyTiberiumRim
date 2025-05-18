@@ -8,13 +8,13 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class TiberiumTerrainInfo : MapInformation
+    public class TiberiumTerrainMapInfo : MapInformation
     {
-        public TiberiumWaterInfo WaterInfo;
+        public TiberiumWaterMapInfo WaterInfo;
 
-        public TiberiumTerrainInfo(Map map) : base(map)
+        public TiberiumTerrainMapInfo(Map map) : base(map)
         {
-            WaterInfo = new TiberiumWaterInfo(map);
+            WaterInfo = new TiberiumWaterMapInfo(map);
         }
 
         public override void ExposeData()

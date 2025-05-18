@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using RimWorld;
+using TiberiumRim.Static;
 using UnityEngine;
 using Verse;
 
@@ -72,21 +73,29 @@ namespace TiberiumRim
 
         public void AddFieldCell(IntVec3 cell, Map map)
         {
-            if(!fieldCellArea.Contains(cell))
+            if (!fieldCellArea.Contains(cell))
                 fieldCellArea.Add(cell);
+
             if (mainProducer.TiberiumTypes.EnumerableNullOrEmpty()) return;
-            foreach (var type in mainProducer.TiberiumTypes)
+
+            foreach (var crystalDef in mainProducer.TiberiumTypes)
             {
-                map.Tiberium().TiberiumInfo.SetFieldColor(cell, true, type.TiberiumValueType);
+                var netVal = crystalDef?.tiberium?.networkValue;
+                if (netVal == null) continue;
+
+                // If the field system still expects a TiberiumValueType, map here:
+                var type = TiberiumCrystalResolver.GetCrystalDefFor(netVal);
+                map.Tiberium().Info.SetFieldColor(cell, true, type);
             }
         }
+
 
         public void RemoveFieldCell(IntVec3 cell, Map map)
         {
             fieldCellArea.Remove(cell);
             foreach (var type in mainProducer.TiberiumTypes)
             {
-                map.Tiberium().TiberiumInfo.SetFieldColor(cell, false, type.TiberiumValueType);
+                map.Tiberium().Info.SetFieldColor(cell, false, type);
             }
         }
 

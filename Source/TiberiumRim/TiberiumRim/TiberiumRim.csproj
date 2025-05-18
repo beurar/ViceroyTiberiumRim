@@ -48,6 +48,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
+    <Reference Include="TeleCore">
+      <HintPath>..\..\..\..\..\..\TeleCore\Assemblies\TeleCore.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
@@ -91,6 +94,8 @@
     <Compile Include="AI\WorkGiver_TiberiumBills.cs" />
     <Compile Include="Animation\ActionPart.cs" />
     <Compile Include="Comps\Comp_PollutionSource.cs" />
+    <Compile Include="Comps\Comp_TiberiumContainer.cs" />
+    <Compile Include="Comps\Comp_TiberiumRefinery.cs" />
     <Compile Include="GameParts\ExposableIntGrid.cs" />
     <Compile Include="GameParts\GameUpdate\CoroutineDriver.cs" />
     <Compile Include="GameParts\GameUpdate\TiberiumRoot.cs" />
@@ -99,10 +104,11 @@
     <Compile Include="GameParts\Interfaces\IGroundZero.cs" />
     <Compile Include="GameParts\Interfaces\IPollutionSource.cs" />
     <Compile Include="GameParts\Interfaces\IResearchCraneTarget.cs" />
-    <Compile Include="GameParts\MapComps\SuppressionMapInfo.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumPollutionMapInfo.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumTerrainInfo.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumUndergroundInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumSuppressionMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumPollutionMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumSpreaderMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumTerrainMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumUndergroundMapInfo.cs" />
     <Compile Include="GameParts\PollutionTracker.cs" />
     <Compile Include="GameParts\World\GameSettingsInfo.cs" />
     <Compile Include="Hediffs\HediffDiscoverable.cs" />
@@ -147,10 +153,10 @@
     <Compile Include="GameParts\ITab_ContainedPawn_Health.cs" />
     <Compile Include="GameParts\ITab_MechConstruction.cs" />
     <Compile Include="GameParts\ITab_CustomRefineryBills.cs" />
-    <Compile Include="GameParts\MapComps\HarvesterMapInfo.cs" />
-    <Compile Include="GameParts\MapComps\GameComponent_CameraPanAndLock.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumHarvesterMapInfo.cs" />
+    <Compile Include="GameParts\GameComponent_CameraPanAndLock.cs" />
     <Compile Include="GameParts\MapComps\MapComponentWithDraw.cs" />
-    <Compile Include="GameParts\MapComps\MapInformation.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\MapInformation.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_AtTurretHub.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_BeamHub.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_ResearchCrane.cs" />
@@ -216,6 +222,7 @@
     <Compile Include="Research\TRMainButtonDef.cs" />
     <Compile Include="Research\Wiki\WikiEntryDef.cs" />
     <Compile Include="StaticData.cs" />
+    <Compile Include="Static\TiberiumCrystalResolver.cs" />
     <Compile Include="TiberiumEnvironment\Conversions\AnimalConversion.cs" />
     <Compile Include="TiberiumEnvironment\Conversions\PlantConversion.cs" />
     <Compile Include="TiberiumEnvironment\Conversions\TerrainConversion.cs" />
@@ -233,11 +240,10 @@
     <Compile Include="TiberiumEnvironment\ThingSelectors\ThingGroupChance.cs" />
     <Compile Include="TiberiumEnvironment\ThingSelectors\ThingOptionsDef.cs" />
     <Compile Include="TiberiumEnvironment\ThingSelectors\WeightedThing.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumAffecter.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumBlossomInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumHediffMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumBlossomMapInfo.cs" />
     <Compile Include="TiberiumEnvironment\TiberiumField.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumSpreader.cs" />
-    <Compile Include="GameParts\MapComps\MapPawnInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumPawnMapInfo.cs" />
     <Compile Include="GameParts\World\WorldComponent_TR.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_DoorFrame.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_TurretGunTop.cs" />
@@ -278,10 +284,10 @@
     <Compile Include="Story\ScenPart_ScrinArrival.cs" />
     <Compile Include="TiberiumEnvironment\Grid_Suppression.cs" />
     <Compile Include="TiberiumEnvironment\Grid_Flora.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumFloraMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumFloraMapInfo.cs" />
     <Compile Include="TiberiumEnvironment\TiberiumGarden.cs" />
     <Compile Include="TiberiumEnvironment\TiberiumMapRenderer.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumStructureInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumStructureMapInfo.cs" />
     <Compile Include="TiberiumEnvironment\TiberiumConsistency.cs" />
     <Compile Include="Hediffs\Recipe\Recipe_RemoveTiberiumSample.cs" />
     <Compile Include="TiberiumEnvironment\World\GroundZero.cs" />
@@ -289,6 +295,7 @@
     <Compile Include="TiberiumEnvironment\World\WorldLayer_Tiberium.cs" />
     <Compile Include="TiberiumEnvironment\World\WorldZone.cs" />
     <Compile Include="TiberiumObjects\AreaMutator.cs" />
+    <Compile Include="TiberiumObjects\Building_TNW_Pipe.cs" />
     <Compile Include="TiberiumObjects\CellCrawler.cs" />
     <Compile Include="TiberiumObjects\TiberiumCrater.cs" />
     <Compile Include="TiberiumObjects\TiberiumGeyserCrack.cs" />
@@ -326,17 +333,14 @@
     <Compile Include="Hediffs\TiberiumInfection\VisceralPod.cs" />
     <Compile Include="TiberiumPawns\Visceroid.cs" />
     <Compile Include="Comps\Comp_Suppression.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_Node.cs" />
-    <Compile Include="TiberiumProcessing\ContainerLeak.cs" />
     <Compile Include="GameParts\PlaceWorkers\Placeworker_Suppression.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_OnlyOutside.cs" />
-    <Compile Include="TiberiumProcessing\TiberiumBillStack.cs" />
+    <Compile Include="TiberiumProcessing\Building_TNW_TiberiumSpike.cs" />
     <Compile Include="TiberiumProcessing\TiberiumCost.cs" />
     <Compile Include="TiberiumProcessing\TiberiumTypeCost.cs" />
     <Compile Include="Utilities\CellUtils.cs" />
     <Compile Include="Utilities\RedAlertDefOf.cs" />
     <Compile Include="Utilities\TerrainGenerator.cs" />
-    <Compile Include="Utilities\TiberiumBillUtility.cs" />
     <Compile Include="Utilities\TiberiumFX.cs" />
     <Compile Include="Utilities\TLog.cs" />
     <Compile Include="Utilities\TRWidgets.cs" />
@@ -409,10 +413,8 @@
     <Compile Include="Weaponry\SuperWeapon\Nuke_Strike.cs" />
     <Compile Include="Weaponry\TurretGun.cs" />
     <Compile Include="Weaponry\TurretProperties.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_WorkBench.cs" />
-    <Compile Include="Weaponry\CompTNW_Turret.cs" />
+    <Compile Include="Weaponry\Comp_Turret.cs" />
     <Compile Include="GameParts\Designators\Designator_BuildFixed.cs" />
-    <Compile Include="TiberiumProcessing\Gizmo_TiberiumStorage.cs" />
     <Compile Include="GameParts\TRBuilding.cs" />
     <Compile Include="Weaponry\Verb_Beam.cs" />
     <Compile Include="Weaponry\Verb_BurstToTarget.cs" />
@@ -422,34 +424,21 @@
     <Compile Include="VisualEffects\FXGraphicData.cs" />
     <Compile Include="VisualEffects\FXPawn.cs" />
     <Compile Include="MechanicalPawns\Pawn_UnitDrafter.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumMapInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumMapInfo.cs" />
     <Compile Include="VisualEffects\TextureContent\TiberiumContent.cs" />
     <Compile Include="TiberiumEnvironment\Grid_Tiberium.cs" />
     <Compile Include="TiberiumObjects\TRThing.cs" />
     <Compile Include="TiberiumObjects\TiberiumPlant.cs" />
     <Compile Include="TiberiumProcessing\Building_TibBench.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_Crafter.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_Pipe.cs" />
-    <Compile Include="TiberiumProcessing\CompPower_Tiberium.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_Power.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_Refinery.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_Silo.cs" />
-    <Compile Include="TiberiumProcessing\CompTNW_TNC.cs" />
     <Compile Include="GameParts\Designators\DesignationExtension.cs" />
     <Compile Include="GameParts\Designators\Designator_PlacePipe.cs" />
     <Compile Include="GameParts\Designators\Designator_RemoveTiberiumPipe.cs" />
     <Compile Include="GameParts\Designators\Designator_TRMenu.cs" />
-    <Compile Include="TiberiumProcessing\Graphic_LinkedTNW.cs" />
-    <Compile Include="TiberiumProcessing\Graphic_LinkedTNWOverlay.cs" />
     <Compile Include="TiberiumProcessing\HarvesterReservationManager.cs" />
     <Compile Include="AI\JobGiver_HarvestTiberium.cs" />
     <Compile Include="AI\JobGiver_IdleAtRefinery.cs" />
     <Compile Include="AI\JobGiver_UnloadAtRefinery.cs" />
-    <Compile Include="GameParts\MapComps\MapComponent_TNWManager.cs" />
     <Compile Include="TiberiumProcessing\TRecipeDef.cs" />
-    <Compile Include="TiberiumProcessing\TiberiumBill.cs" />
-    <Compile Include="TiberiumProcessing\TiberiumNetwork.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_Gap.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_Once.cs" />
     <Compile Include="GameParts\PlaceWorkers\PlaceWorker_OnProducer.cs" />
@@ -458,8 +447,6 @@
     <Compile Include="TiberiumProcessing\PortableContainer.cs" />
     <Compile Include="TiberiumProcessing\RefineryTargetInfo.cs" />
     <Compile Include="TiberiumProcessing\SectionLayer_TiberiumNetworkGrid.cs" />
-    <Compile Include="TiberiumProcessing\StructureSet.cs" />
-    <Compile Include="TiberiumProcessing\TiberiumContainer.cs" />
     <Compile Include="GameParts\Alert_TiberiumExposure.cs" />
     <Compile Include="VisualEffects\CompFX.cs" />
     <Compile Include="Comps\Comp_WaterContaminator.cs" />
@@ -483,7 +470,7 @@
     <Compile Include="GameParts\Incidents\IncidentWorker_TiberiumArrival.cs" />
     <Compile Include="VisualEffects\Particles\MapComponent_Particles.cs" />
     <Compile Include="GameParts\MapComps\MapComponent_Tiberium.cs" />
-    <Compile Include="GameParts\MapComps\TiberiumWaterInfo.cs" />
+    <Compile Include="GameParts\MapComps\MapInfo\TiberiumWaterMapInfo.cs" />
     <Compile Include="VisualEffects\Particles\Particle.cs" />
     <Compile Include="ThingComp_PlantExplode.cs" />
     <Compile Include="Comps\Comp_TiberiumExplosive.cs" />
@@ -504,7 +491,6 @@
     <Compile Include="TiberiumPawns\TiberiumPawn.cs" />
     <Compile Include="TiberiumObjects\TiberiumPlant_Expeller.cs" />
     <Compile Include="TiberiumPosIndices.cs" />
-    <Compile Include="TiberiumProcessing\Building_TNW_Pipe.cs" />
     <Compile Include="TiberiumObjects\TiberiumProducer.cs" />
     <Compile Include="TiberiumObjects\TiberiumProducerDef.cs" />
     <Compile Include="TiberiumObjects\TiberiumProducerResidue.cs" />
@@ -512,7 +498,6 @@
     <Compile Include="Loading\TiberiumRimPatches.cs" />
     <Compile Include="Loading\TiberiumSettings.cs" />
     <Compile Include="TiberiumObjects\TiberiumSpawnMode.cs" />
-    <Compile Include="TiberiumProcessing\Building_TNW_TiberiumSpike.cs" />
     <Compile Include="TiberiumObjects\TiberiumSpore.cs" />
     <Compile Include="TiberiumObjects\TiberiumTerrainDef.cs" />
     <Compile Include="TiberiumTerrainDefOf.cs" />
@@ -534,6 +519,9 @@
     <PackageReference Include="Krafs.Rimworld.Ref">
       <Version>1.5.4409</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

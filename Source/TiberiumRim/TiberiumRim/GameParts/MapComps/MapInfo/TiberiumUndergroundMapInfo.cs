@@ -7,9 +7,9 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class TiberiumUndergroundInfo : MapInformation
+    public class TiberiumUndergroundMapInfo : MapInformation
     {
-        public TiberiumUndergroundInfo(Map map) : base(map)
+        public TiberiumUndergroundMapInfo(Map map) : base(map)
         {
         }
     }

@@ -6,6 +6,7 @@ using Verse;
 using RimWorld;
 using Verse.AI;
 using UnityEngine;
+using TeleCore;
 
 namespace TiberiumRim
 {
@@ -39,7 +40,7 @@ namespace TiberiumRim
         }
 
         private MapComponent_Tiberium TiberiumManager => map.GetComponent<MapComponent_Tiberium>();
-        private MapComponent_TNWManager TNWManager => map.GetComponent<MapComponent_TNWManager>();
+        private MapComponent_TeleCore TeleCoreManager => map.GetComponent<MapComponent_TeleCore>();
 
         private Harvester CurHarvester => AllHarvesters[Current];
 
@@ -74,8 +75,8 @@ namespace TiberiumRim
 
         private bool QueueFull(Harvester harvester)
         {
-            float value = ReservedQueues[harvester].Sum(t => t.HarvestValue) + harvester.Container.TotalStorage;
-            return value >= harvester.Container.capacity;
+            double value = ReservedQueues[harvester].Sum(t => t.HarvestValue) + harvester.ContainerComp.Capacity;
+            return value >= harvester.ContainerComp.SpaceLeft;
         }
 
         private void Enqueue(TiberiumCrystal tib, Harvester harvester)
@@ -97,7 +98,7 @@ namespace TiberiumRim
 
         public void FillQueuesForExistingHarvesters()
         { 
-            PossiblePasses = AllHarvesters.Count - Mathf.Clamp(AllHarvesters.Count - TiberiumManager.TiberiumInfo.TotalCount, 0, int.MaxValue);
+            PossiblePasses = AllHarvesters.Count - Mathf.Clamp(AllHarvesters.Count - TiberiumManager.Info.TotalCount, 0, int.MaxValue);
 
             Finished = false;
             Current = 0;

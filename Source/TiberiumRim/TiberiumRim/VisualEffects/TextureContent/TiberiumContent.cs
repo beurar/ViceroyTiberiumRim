@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Verse;
 using RimWorld;
+using TeleCore;
 
 namespace TiberiumRim
 {
@@ -14,9 +15,9 @@ namespace TiberiumRim
     {
         static TiberiumContent() { }
 
-        public static readonly Graphic_LinkedTNWOverlay TiberiumNetworkPipesOverlay = new Graphic_LinkedTNWOverlay(GraphicDatabase.Get<Graphic_Single>("Buildings/Common/Network/TNW_PipeOverlayAtlas", ShaderDatabase.Transparent, Vector2.one, new ColorInt(155, 255, 0).ToColor));
-        public static readonly Graphic_LinkedTNWOverlay TiberiumNetworkPipesGlow = new Graphic_LinkedTNWOverlay(GraphicDatabase.Get<Graphic_Single>("Buildings/Common/Network/TNW_PipeOverlayAtlas", ShaderDatabase.MoteGlow, Vector2.one, Color.white));
-        public static readonly Graphic_LinkedTNW TiberiumNetworkPipes = new Graphic_LinkedTNW(GraphicDatabase.Get<Graphic_Single>("Buildings/Common/Network/TNW_PipeAtlas", ShaderDatabase.Transparent, Vector2.one, Color.white));
+        public static readonly Graphic_Linked_NetworkStructureOverlay TiberiumNetworkPipesOverlay = new Graphic_Linked_NetworkStructureOverlay(GraphicDatabase.Get<Graphic_Single>("Buildings/Common/Network/TNW_PipeOverlayAtlas", ShaderDatabase.Transparent, Vector2.one, new ColorInt(155, 255, 0).ToColor));
+        public static readonly Graphic_Linked_NetworkStructureOverlay TiberiumNetworkPipesGlow = new Graphic_Linked_NetworkStructureOverlay(GraphicDatabase.Get<Graphic_Single>("Buildings/Common/Network/TNW_PipeOverlayAtlas", ShaderDatabase.MoteGlow, Vector2.one, Color.white));
+        public static readonly Graphic_LinkedNetworkStructure TiberiumNetworkPipes = new Graphic_LinkedNetworkStructure(GraphicDatabase.Get<Graphic_Single>("Buildings/Common/Network/TNW_PipeAtlas", ShaderDatabase.Transparent, Vector2.one, Color.white));
 
         //Icons
         public static readonly Texture2D MissingConnection = ContentFinder<Texture2D>.Get("UI/Icons/TiberiumNetwork/ConnectionMissing", false);

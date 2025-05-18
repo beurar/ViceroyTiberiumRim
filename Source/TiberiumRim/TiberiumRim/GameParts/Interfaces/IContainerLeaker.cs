@@ -9,6 +9,6 @@ namespace TiberiumRim
     public interface IContainerLeaker
     {
         bool ShouldLeak { get; }
-        TiberiumContainer Container { get; }
+        Comp_TiberiumContainer Container { get; }
     }
 }

@@ -6,16 +6,15 @@ using Verse.AI;
 
 namespace TiberiumRim
 {
-    public class HarvesterMapInfo : MapInformation
+    public class TiberiumHarvesterMapInfo : MapInformation
     {
         public List<Harvester> AllHarvesters = new List<Harvester>();
 
         private MapComponent_Tiberium Tiberium => TRUtils.Tiberium(map);
-        private MapComponent_TNWManager TNWManager => map.GetComponent<MapComponent_TNWManager>();
 
-        private TiberiumGrid TiberiumGrid => Tiberium.TiberiumInfo.TiberiumGrid;
+        private TiberiumGrid TiberiumGrid => Tiberium.Info.TiberiumGrid;
 
-        public HarvesterMapInfo(Map map) : base(map)
+        public TiberiumHarvesterMapInfo(Map map) : base(map)
         {
             //harvestableBools = new BoolGrid(map);
         }

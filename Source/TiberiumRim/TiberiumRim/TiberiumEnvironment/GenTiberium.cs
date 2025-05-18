@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using RimWorld;
+using TiberiumRim.Static;
 using UnityEngine;
 using Verse;
 
@@ -142,7 +143,7 @@ namespace TiberiumRim
         {
             if (map == null) return null;
             if (!pos.InBounds(map)) return null;
-            return map.Tiberium().TiberiumInfo.TiberiumAt(pos); 
+            return map.Tiberium().Info.TiberiumAt(pos); 
         }
 
         public static TiberiumCrystal TryGetTiberiumFor(this IntVec3 c, Harvester harvester)
@@ -225,14 +226,17 @@ namespace TiberiumRim
 
         public static TiberiumProducerDef BlossomTreeFrom(TiberiumProducerDef producer)
         {
-            var crystals = producer.tiberiumFieldRules.crystalOptions;
-            if (crystals.NullOrEmpty()) return TiberiumDefOf.BlossomTree;
-            var crystalType = ((TiberiumCrystalDef) crystals.RandomElement().thing).TiberiumValueType;
-            if (crystalType == TiberiumValueType.Green)
-                return TiberiumDefOf.BlossomTree;
-            if (crystalType == TiberiumValueType.Blue)
-                return TiberiumDefOf.BlueBlossomTree;
-            return null;
+            var crystals = producer?.tiberiumFieldRules?.crystalOptions;
+            if (crystals.NullOrEmpty())
+                return TiberiumDefOf.BlossomTree; // Default to green
+
+            // Pick a random crystal option and extract its NetworkValueDef
+            var randomCrystal = crystals.RandomElement().thing as TiberiumCrystalDef;
+            var netVal = randomCrystal?.tiberium?.networkValue;
+            if (netVal == null)
+                return TiberiumDefOf.BlossomTree; // Fallback
+
+            return TiberiumCrystalResolver.GetBlossomTreeFor(netVal);
         }
 
         //Static Bools n' Checks
@@ -247,7 +251,7 @@ namespace TiberiumRim
             return harvester.HarvestMode switch
             {
                 HarvestMode.Nearest => !crystal.def.IsMoss,
-                HarvestMode.Value => (crystal.def == crystal.TiberiumMapComp.TiberiumInfo.MostValuableType),
+                HarvestMode.Value => (crystal.def == crystal.TiberiumMapComp.Info.MostValuableType),
                 HarvestMode.Moss => crystal.def.IsMoss,
                 _ => false
             };
@@ -293,27 +297,27 @@ namespace TiberiumRim
 
         public static bool HasTiberium(this IntVec3 c, Map map)
         {
-            return map.Tiberium().TiberiumInfo.HasTiberiumAt(c);
+            return map.Tiberium().Info.HasTiberiumAt(c);
         }
 
         public static bool CanGrowFrom(this IntVec3 c, Map map)
         {
-            return map.Tiberium().TiberiumInfo.CanGrowFrom(c);
+            return map.Tiberium().Info.CanGrowFrom(c);
         }
 
         public static bool CanGrowTo(this IntVec3 c, Map map)
         {
-            return map.Tiberium().TiberiumInfo.CanGrowTo(c);
+            return map.Tiberium().Info.CanGrowTo(c);
         }
 
         public static bool IsAffectedCell(this IntVec3 c, Map map)
         {
-            return map.Tiberium().TiberiumInfo.IsAffectedCell(c);
+            return map.Tiberium().Info.IsAffectedCell(c);
         }
 
         public static bool IsSuppressed(this IntVec3 c, Map map)
         {
-            return map.Tiberium().SuppressionInfo.IsSuppressed(c);
+            return map.Tiberium().Suppression.IsSuppressed(c);
         }
 
         public static bool ShouldGrowFloraAt(IntVec3 c, Map map)

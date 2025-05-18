@@ -13,7 +13,6 @@ namespace TiberiumRim
         public TNW_TiberiumSpike tiberiumSpike;
         //public List<TiberiumGeyserCrack> currentCracks = new List<TiberiumGeyserCrack>();
 
-
         private int burstTicksLeft = -1;
 
         private int maxDepositValue = 0;

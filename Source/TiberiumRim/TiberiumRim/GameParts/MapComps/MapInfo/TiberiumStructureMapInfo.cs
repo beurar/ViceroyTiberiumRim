@@ -8,14 +8,14 @@ using Verse;
 
 namespace TiberiumRim
 {
-    public class TiberiumStructureInfo : MapInformation
+    public class TiberiumStructureMapInfo : MapInformation
     {
         public HashSet<TiberiumProducer> AllProducers = new HashSet<TiberiumProducer>();
         public HashSet<TiberiumProducer> ResearchProducers = new HashSet<TiberiumProducer>();
         public HashSet<TiberiumBlossom> Blossoms = new HashSet<TiberiumBlossom>();
         public HashSet<TiberiumGeyser> Geysers = new HashSet<TiberiumGeyser>();
 
-        public TiberiumStructureInfo(Map map) : base(map) { }
+        public TiberiumStructureMapInfo(Map map) : base(map) { }
 
         public TiberiumProducer ClosestProducer(Pawn seeker)
         {

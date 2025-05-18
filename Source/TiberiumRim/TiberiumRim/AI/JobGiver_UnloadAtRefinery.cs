@@ -36,7 +36,7 @@ namespace TiberiumRim
 
     public class JobDriver_UnloadAtRefinery : JobDriver
     {
-        private CompTNW Refinery => Harvester.RefineryComp;
+        private Comp_TiberiumRefinery Refinery => Harvester.RefineryComp;
 
         private Harvester Harvester => (Harvester)pawn;
 
@@ -58,11 +58,14 @@ namespace TiberiumRim
             };
             unload.tickAction = delegate
             {
-                if (!Refinery?.Container.CapacityFull ?? false)
+                if (!Refinery?.Container.IsFull ?? false)
                 {
-                    if (Harvester.Container.StoredPercent > 0f)
+                    if (Harvester.ContainerComp.StoredPercent > 0f)
                     {
-                        Harvester.Container.TryTransferTo(Refinery.Container, Harvester.Container.MainValueType, Harvester.kindDef.unloadValue);
+                        foreach (var storedTiberiumType in Harvester.ContainerComp.StoredValues)
+                        {
+                            Refinery.InjectTiberium(storedTiberiumType.Key, storedTiberiumType.Value);
+                        }                        
                     }
                     else
                     {
